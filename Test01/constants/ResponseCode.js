@@ -1,0 +1,5 @@
+module.exports = {
+    REQUEST_SUCCESS: 1000,
+    REQUEST_FAIL: 1001,
+    REQUEST_BLOCKING : 1002,
+};

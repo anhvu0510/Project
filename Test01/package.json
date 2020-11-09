@@ -1,0 +1,19 @@
+{
+  "name": "test01",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "ioredis": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --delay 5 --inspect index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
