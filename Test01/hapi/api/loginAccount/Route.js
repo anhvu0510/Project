@@ -21,7 +21,9 @@ module.exports = [{
         },
         response: {
             status: {
-                [ResponseCode.REQUEST_SUCCESS]: Joi.object({}).description('Thành công'),
+                [ResponseCode.REQUEST_SUCCESS]: Joi.object({
+                    message : Joi.string().example('Đăng nhập thành công')
+                }).description('Thành công'),
                 [ResponseCode.REQUEST_FAIL]: Joi.object({
                     message: Joi.string().example('Thất bại!').description('Lý do thất bại')
                 }).description('Thất bại')
