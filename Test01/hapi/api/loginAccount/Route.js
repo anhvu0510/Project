@@ -5,7 +5,7 @@ const ResponseCode = require('project/constants/ResponseCode')
 module.exports = [{
     method : 'POST',
     path : '/api/login',
-    handler : Module,
+    handler : Module.processLogin,
     options : {
         description : "Đăng Nhập",
         auth : false,
@@ -31,6 +31,30 @@ module.exports = [{
         },
 
 
+        tags : ['api','Login']
+    }
+} ,{
+    method : 'GET',
+    path : '/api/reset/{OTP}',
+    handler : Module.processResetPassword,
+    options : {
+        description : "Đặt Lại Mật Khẩu",
+        auth : false,
+        validate : {
+            params : Joi.object({
+                OTP : Joi.string().max(6).required()
+            }).options({abortEarly : true,})
+        },
+        response: {
+            status: {
+                [ResponseCode.REQUEST_SUCCESS]: Joi.object({
+                    message : Joi.string()
+                }).description('Thành công'),
+                [ResponseCode.REQUEST_FAIL]: Joi.object({
+                    message: Joi.string().example('Thất bại!').description('Lý do thất bại')
+                }).description('Thất bại')
+            },
+        },
         tags : ['api','Login']
     }
 }]
