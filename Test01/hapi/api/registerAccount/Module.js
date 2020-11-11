@@ -1,9 +1,9 @@
+const _= require('lodash')
+
 const ResCode = require('../../../constants/ResponseCode')
 const User = require('project/models/Acount.Model')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const tokenKey = require('project/config/Authentication').jwtSecretKey
-const _= require('lodash')
+const passwordHelper = require('project/helpers/passwordHelper')
+const cacheHelper = require('project/helpers/cacheHelper')
 
 const randomText = (length) =>{
     let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -13,69 +13,63 @@ const randomText = (length) =>{
     }
     return result;
 }
-const processRegister = async (request,reply) => {
+
+module.exports = async (request,reply) => {
     try{
-        let OTP = null;
         const clientIP = request.clientIp;
-        const {username,password} = request.payload
+        const {username,password,OTP} = request.payload
 
         //Check username
-        const foundUser = await  User.find({username}).count();
+        const foundUser = await  User.findOne({username}).lean();
         if(foundUser){
             return  reply.api({
-                message : 'Account already exists'
+                message : 'Tên đăng nhập đã tồn tại'
             }).code(ResCode.REQUEST_FAIL)
         }
         //Check number account/ip
-        const numAccount = await User.find({clientIP}).count() + 1;
-        console.log(`IP ${clientIP} have : ${numAccount} account`)
-        if(numAccount > 3){
-            //Ramdom OTP
-            OTP = randomText(6)
+        let replyNumberIP = JSON.parse(await cacheHelper.getCathe(clientIP));
+
+        //Create number of account/ip register
+        if(_.isNil(replyNumberIP)){
+            await cacheHelper.setCache(clientIP,1);
+        }
+        //Process ip have 3 account
+        if(replyNumberIP === 3){
+            let replyOTP = JSON.parse(await cacheHelper.getCathe('OTP-Register'));
+            if(_.isNil(replyOTP)){
+                const genOTP = randomText(6);
+                await cacheHelper.setCache('OTP-Register',genOTP);
+                replyOTP = genOTP
+            }
+            if(OTP === ''){
+                return reply.api({
+                    message : 'Vui lòng nhập mã OTP để đăng kí',
+                    OTP : replyOTP
+                }).code(ResCode.REQUEST_FAIL);
+            }
+            if(replyOTP !== OTP){
+                return reply.api({
+                    message : 'Mã OTP không khớp - Vui lòng nhập lại',
+                    OTP : replyOTP
+                }).code(ResCode.REQUEST_FAIL);
+            }
+            //delete OTP-Register
+            await cacheHelper.delCache('OTP-Register');
+        }else{
+            await cacheHelper.setCache(clientIP,Number(++replyNumberIP));
         }
         //Hash password
-        const hashPassword = await bcrypt.hash(password,10);
+        const hashPassword = passwordHelper.hashPassword(password);
         //Create User
         const newUser = await User.create({
-            clientIP,
             username,
-            password : hashPassword,
-            OTP
+            password : hashPassword
         });
-        //Genarate Token
-        const token = await jwt.sign({id : newUser._id},tokenKey);
-
 
         return reply.api({
-            message : 'Register Success',
-            token
+            message : 'Đăng kí tài khoản thành công',
         }).code(ResCode.REQUEST_SUCCESS)
     }catch (e) {
         throw (e)
     }
-}
-const verifyOTP = async(request,reply) => {
-    const userID = await jwt.verify(request.headers.authorization,tokenKey);
-    const {OTP} = await User.findById(userID.id).select('OTP');
-
-    if(_.isNull(OTP)){
-        return reply.api({
-            message : 'The Account is authenticated'
-        }).code(ResCode.REQUEST_SUCCESS)
-    }
-
-    if(_.isEqual(OTP,request.params.OTP)){
-        await User.update({_id : userID.id},{ OTP : null})
-        return reply.api({
-            message : 'OTP Match - Verify Success'
-        }).code(ResCode.REQUEST_SUCCESS)
-    }
-    return reply.api({
-        message : 'OTP Not Match - Check again'
-    }).code(ResCode.REQUEST_FAIL)
-}
-
-module.exports = {
-    processRegister,
-    verifyOTP
 }

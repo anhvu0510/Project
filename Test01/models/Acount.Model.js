@@ -5,17 +5,13 @@ const Schema = Mongoose.Schema;
 const Model = {
     connection : 'Practice',
     tableName : 'Account',
-    // autoIncrement : {
-    //     id :{
-    //         startAt : 1,
-    //         incrementBy : 1,
-    //     }
-    // },
+    autoIncrement : {
+        id :{
+            startAt : 1,
+            incrementBy : 1,
+        }
+    },
     attributes : new Schema({
-        clientIP : {
-            type : String,
-            required: true
-        },
         username : {
             type: String,
             required : true
@@ -23,11 +19,6 @@ const Model = {
         password : {
             type : String,
         },
-        OTP:{
-            type: String,
-            default : null
-        }
-
     })
 }
 

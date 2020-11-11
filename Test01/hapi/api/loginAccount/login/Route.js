@@ -5,7 +5,7 @@ const ResponseCode = require('project/constants/ResponseCode')
 module.exports = [{
     method : 'POST',
     path : '/api/login',
-    handler : Module.processLogin,
+    handler : Module,
     options : {
         description : "Đăng Nhập",
         auth : false,
@@ -14,41 +14,20 @@ module.exports = [{
                 username : Joi.string()
                     .pattern(/^\D[a-zA-Z0-9]{1,}$/)
                     .required()
+                    .example('Usertest01')
                     .label('Tên Đăng Nhập')
                     .description('Tên Đăng Nhập'),
-                password : Joi.string().required().description('Mật Khẩu'),
-            }).options({abortEarly : true,})
-        },
-        response: {
-            status: {
-                [ResponseCode.REQUEST_SUCCESS]: Joi.object({
-                    message : Joi.string().example('Đăng nhập thành công')
-                }).description('Thành công'),
-                [ResponseCode.REQUEST_FAIL]: Joi.object({
-                    message: Joi.string().example('Thất bại!').description('Lý do thất bại')
-                }).description('Thất bại')
-            },
-        },
-
-
-        tags : ['api','Login']
-    }
-} ,{
-    method : 'GET',
-    path : '/api/reset/{OTP}',
-    handler : Module.processResetPassword,
-    options : {
-        description : "Đặt Lại Mật Khẩu",
-        auth : false,
-        validate : {
-            params : Joi.object({
-                OTP : Joi.string().max(6).required()
+                password : Joi.string()
+                    .required()
+                    .example('helloword')
+                    .description('Mật Khẩu'),
             }).options({abortEarly : true,})
         },
         response: {
             status: {
                 [ResponseCode.REQUEST_SUCCESS]: Joi.object({
                     message : Joi.string()
+                        .example('Đăng nhập thành công')
                 }).description('Thành công'),
                 [ResponseCode.REQUEST_FAIL]: Joi.object({
                     message: Joi.string().example('Thất bại!').description('Lý do thất bại')
