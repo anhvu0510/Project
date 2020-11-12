@@ -28,7 +28,8 @@ module.exports = async (request, reply) => {
             Redis.getCathe(`LOGIN-${username}`),
             Redis.getTimeOut(`LOGIN-${IP}`),
             Redis.getTimeOut(`LOGIN-${username}`)
-        ])
+        ]);
+
         if (timeoutIP > 0 && replyIP === 'LOCKED') {
             return reply.api({
                 message: `[LOCKED] IP : ${IP} bị khóa trong ${Math.floor(timeoutIP / 60)} phút`
@@ -43,7 +44,7 @@ module.exports = async (request, reply) => {
         //Check password
         if (!passwordHelper.comparePassword(password, findUser.password)) {
             if (_.isNil(replyIP)) {
-                replyIP = await Redis.setCache(`LOGIN-${IP}`, 1, 60)
+                replyIP = await Redis.setCache(`LOGIN-${IP}`, 1, 60);
             }
             if (_.isNil(replyUser)) {
                 replyUser = await Redis.setCache(`LOGIN-${username}`, 1);
