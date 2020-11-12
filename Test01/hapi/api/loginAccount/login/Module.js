@@ -7,89 +7,76 @@ const User = require('project/models/Acount.Model');
 const Redis = require('project/helpers/cacheHelper')
 const passwordHelper = require('project/helpers/passwordHelper')
 
-
 const TIME_LOCK_SPAM_LOGIN = 60 * 60;
 const TIME_LOCK_LOGIN_US = 5 * 60;
-const TIME_LOCK_LOGIN_IP = 1 * 60;
+const TIME_LOCK_LOGIN_IP = 5 * 60;
 
-const checkLogin = async (request, user) => {
-    const {password} = request.payload
-    if (_.isNil(user)) {
-        return {
-            status: false,
-            message: 'Tên đăng nhập không tồn tại'
-        }
-    }
-    if (!passwordHelper.comparePassword(password, user.password)) {
-        return {
-            status: false,
-            message: 'Mật khẩu không chính xác'
-        }
-    }
-    return {
-        status: true,
-        message: 'Đăng nhập thành công'
-    }
-}
-
-
-module.exports = async (request, h) => {
+module.exports = async (request, reply) => {
     try {
         const IP = request.clientIp;
         const {username, password} = request.payload;
-        const user = await User.findOne({username}).lean();
-        //Check login
-        const {status, message} = await checkLogin(request, user);
-
-        let reply = JSON.parse(await Redis.getCathe(IP))
-        let replyUser = JSON.parse(await Redis.getCathe(username))
-
-        //Success login
-        if ((status === true) && (reply !== 'LOCKED_SPAM') && (reply !== 'LOCKED') && (replyUser !== 'LOCKED')) {
-            return h.api({message})
-                .code(ResCode.REQUEST_SUCCESS)
-        } else {
-            //First Request => Set Catche in 1 minute
-            if (_.isNil(reply)) {
-                const result = await Redis.setCache(IP, 1, 60)
-            }
-            //Create number of login
-            if (_.isNil(replyUser)) {
-                const result = await Redis.setCache(username, 1)
-            }
-            //Get timeout
-            const timeout = await Redis.getTimeOut(IP)
-            const timeoutAccLogin = await Redis.getTimeOut(username);
-
-            //Check IP
-            if (reply === 20 && timeout > 0) {
-                const result = await Redis.setCache(IP, "LOCKED_SPAM", TIME_LOCK_SPAM_LOGIN)
-                return h.api({message: `[SPAM LOGIN] IP ${IP} bị khóa đăng nhập trong 60 phút`})
-                    .code(ResCode.REQUEST_FAIL)
-            } else if (reply === "LOCKED_SPAM") {
-                return h.api({message: `[SPAM LOGIN] IP ${IP} bị khóa đăng nhập trong ${Math.floor(timeout / 60)} phút`})
-                    .code(ResCode.REQUEST_FAIL)
-            } else if (reply === 'LOCKED') {
-                return h.api({message: `[LOCKED LOGIN] IP ${IP} bị khóa đăng nhập trong ${timeout} phút`})
-                    .code(ResCode.REQUEST_FAIL)
-            } else {
-                const result = await Redis.setCache(IP, Number(++reply), timeout)
-            }
-
-            //Check Username
-            if (replyUser === 2) {
-                const resultUS = await Redis.setCache(username, "LOCKED", TIME_LOCK_LOGIN_US);
-                const resultIP = await Redis.setCache(IP, "LOCKED", TIME_LOCK_LOGIN_IP)
-                return h.api({message: `[LOCKED LOGIN] IP ${IP} trong 1 phút và Username ${username}  trong 5 phút`})
-                    .code(ResCode.REQUEST_FAIL)
-            } else if (replyUser === 'LOCKED') {
-                return h.api({message: `[LOCKED LOGIN] USER: ${username} bị khóa đăng nhập trong ${Math.floor(timeoutAccLogin / 60)} phút`})
-                    .code(ResCode.REQUEST_FAIL)
-            } else {
-                const result = await Redis.setCache(username, Number(++replyUser));
-            }
-            return h.api({message}).code(ResCode.REQUEST_FAIL)
+        const findUser = await User.findOne({username}).lean();
+        //Check user name
+        if (_.get(findUser, 'id', false) === false) {
+            return reply.api({
+                message: 'Tên Đăng Nhập Không Tồn Tại'
+            }).code(ResCode.REQUEST_FAIL)
         }
+        //Check timeout
+        let replyIP = JSON.parse(await Redis.getCathe(`LOGIN-${IP}`));
+        let replyUser = JSON.parse(await Redis.getCathe(`LOGIN-${username}`));
+
+        let timeoutIP = await Redis.getTimeOut(`LOGIN-${IP}`);
+        let timeoutUser = await Redis.getTimeOut(`LOGIN-${username}`)
+
+        if (timeoutIP > 0 && replyIP === 'LOCKED') {
+            return reply.api({
+                message: `[LOCKED] IP : ${IP} bị khóa trong ${Math.floor(timeoutIP / 60)} phút`
+            }).code(ResCode.REQUEST_FAIL)
+        }
+
+        if (timeoutUser > 0) {
+            return reply.api({
+                message: `[LOCKED] User : ${username} bị khóa trong ${Math.floor(timeoutUser / 60)} phút`
+            }).code(ResCode.REQUEST_FAIL)
+        }
+        //Check password
+        if (!passwordHelper.comparePassword(password, findUser.password)) {
+            if (_.isNil(replyIP)) {
+                replyIP = await Redis.setCache(`LOGIN-${IP}`, 1, 60)
+            }
+            if (_.isNil(replyUser)) {
+                replyUser = await Redis.setCache(`LOGIN-${username}`, 1);
+            }
+            //Process Locked IP
+            if (replyIP === 20) {
+                const result = await Redis.setCache(`LOGIN-${IP}`, 'LOCKED', TIME_LOCK_SPAM_LOGIN)
+                return reply.api({
+                    message: `[LOCKED SPAM] : IP ${IP} bị khóa trong 60 phút`
+                }).code(ResCode.REQUEST_FAIL)
+            } else {
+                timeoutIP = await Redis.getTimeOut(`LOGIN-${IP}`)
+                const result = await Redis.setCache(`LOGIN-${IP}`, Number(++replyIP), timeoutIP)
+            }
+            //Process Locked User
+            if (replyUser === 3) {
+                const resultUS = await Redis.setCache(`LOGIN-${username}`, 'LOCKED', TIME_LOCK_LOGIN_US)
+                const resultIP = await Redis.setCache(`LOGIN-${IP}`, 'LOCKED', TIME_LOCK_LOGIN_IP)
+                return reply.api({
+                    message: `[LOCKED] IP:${IP} & User: ${username} bị khóa trong vòng 5 phút`
+                }).code(ResCode.REQUEST_FAIL)
+            } else {
+                const result = await Redis.setCache(`LOGIN-${username}`, (++replyUser));
+            }
+            return reply.api({
+                message: 'Mật Khẩu Không Chính Xác'
+            }).code(ResCode.REQUEST_FAIL)
+        }
+        //Login Succsess
+        return reply.api({
+            message: 'Đăng Nhập Thành Công'
+        }).code(ResCode.REQUEST_FAIL)
+
     } catch (e) {
         throw (e);
     }

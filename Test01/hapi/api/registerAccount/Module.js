@@ -21,7 +21,7 @@ module.exports = async (request,reply) => {
 
         //Check username
         const foundUser = await  User.findOne({username}).lean();
-        if(foundUser){
+        if(_.get(foundUser,'id',false) === false){
             return  reply.api({
                 message : 'Tên đăng nhập đã tồn tại'
             }).code(ResCode.REQUEST_FAIL)
@@ -41,7 +41,7 @@ module.exports = async (request,reply) => {
                 await cacheHelper.setCache('OTP-Register',genOTP);
                 replyOTP = genOTP
             }
-            if(OTP === ''){
+            if(_.isEmpty(OTP)){
                 return reply.api({
                     message : 'Vui lòng nhập mã OTP để đăng kí',
                     OTP : replyOTP

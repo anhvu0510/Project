@@ -21,7 +21,7 @@ class CacheHelper {
                 Result = this._Client.set(key,JSON.stringify(value));
             }
             Result.then(success => {
-                resolve(success)
+                resolve(value)
             }).catch((err) => {
                 reject(err)
             })
