@@ -28,7 +28,7 @@ class CacheHelper {
         })
     }
     async getCathe(key){
-        return await  this._Client.get(key);
+        return JSON.parse(await  this._Client.get(key));
     }
     async getTimeOut(key){
         return  await this._Client.call('ttl',key);

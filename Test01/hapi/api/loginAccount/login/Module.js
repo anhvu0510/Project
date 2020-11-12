@@ -23,12 +23,12 @@ module.exports = async (request, reply) => {
             }).code(ResCode.REQUEST_FAIL)
         }
         //Check timeout
-        let replyIP = JSON.parse(await Redis.getCathe(`LOGIN-${IP}`));
-        let replyUser = JSON.parse(await Redis.getCathe(`LOGIN-${username}`));
-
-        let timeoutIP = await Redis.getTimeOut(`LOGIN-${IP}`);
-        let timeoutUser = await Redis.getTimeOut(`LOGIN-${username}`)
-
+        let [replyIP,replyUser,timeoutIP,timeoutUser] = await Promise.all([
+            Redis.getCathe(`LOGIN-${IP}`),
+            Redis.getCathe(`LOGIN-${username}`),
+            Redis.getTimeOut(`LOGIN-${IP}`),
+            Redis.getTimeOut(`LOGIN-${username}`)
+        ])
         if (timeoutIP > 0 && replyIP === 'LOCKED') {
             return reply.api({
                 message: `[LOCKED] IP : ${IP} bị khóa trong ${Math.floor(timeoutIP / 60)} phút`
