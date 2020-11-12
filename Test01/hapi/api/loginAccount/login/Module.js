@@ -72,6 +72,9 @@ module.exports = async (request, reply) => {
                 message: 'Mật Khẩu Không Chính Xác'
             }).code(ResCode.REQUEST_FAIL)
         }
+
+        //Delete Redis
+        const result = await Redis.delCache(`LOGIN-${username}`);
         //Login Succsess
         return reply.api({
             message: 'Đăng Nhập Thành Công'
