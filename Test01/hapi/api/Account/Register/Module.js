@@ -1,6 +1,6 @@
 const _= require('lodash')
 
-const ResCode = require('../../../constants/ResponseCode')
+const ResCode = require('project/constants/ResponseCode')
 const User = require('project/models/Acount.Model')
 const passwordHelper = require('project/helpers/passwordHelper')
 const cacheHelper = require('project/helpers/cacheHelper')
@@ -17,25 +17,30 @@ const randomText = (length) =>{
 module.exports = async (request,reply) => {
     try{
         const clientIP = request.clientIp;
-        const {username,password,OTP} = request.payload
+        const {username,password,OTP,email, fullname} = request.payload
 
         //Check username
         const foundUser = await  User.findOne({username}).lean();
-        if(_.get(foundUser,'id',false) === false){
+        if(_.get(foundUser,'id',false) !== false){
             return  reply.api({
                 message : 'Tên đăng nhập đã tồn tại'
             }).code(ResCode.REQUEST_FAIL)
         }
+        if(_.get(foundUser,'email',false) !== false){
+            return reply.api({
+                message : 'Email đã được sử dụng'
+            }).code(ResCode.REQUEST_FAIL);
+        }
         //Check number account/ip
-        let replyNumberIP = JSON.parse(await cacheHelper.getCathe(clientIP));
+        let replyNumberIP = await cacheHelper.getCathe(clientIP);
 
         //Create number of account/ip register
         if(_.isNil(replyNumberIP)){
-            await cacheHelper.setCache(clientIP,1);
+            replyNumberIP = await cacheHelper.setCache(clientIP,1);
         }
         //Process ip have 3 account
-        if(replyNumberIP === 3){
-            let replyOTP = JSON.parse(await cacheHelper.getCathe('OTP-Register'));
+        if(replyNumberIP === 4){
+            let replyOTP = await cacheHelper.getCathe('OTP-Register');
             if(_.isNil(replyOTP)){
                 const genOTP = randomText(6);
                 await cacheHelper.setCache('OTP-Register',genOTP);
@@ -63,7 +68,8 @@ module.exports = async (request,reply) => {
         //Create User
         const newUser = await User.create({
             username,
-            password : hashPassword
+            password : hashPassword,
+            email,fullname
         });
 
         return reply.api({

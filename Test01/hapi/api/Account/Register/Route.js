@@ -14,21 +14,11 @@ module.exports = [
             auth : false,
             validate : {
                 payload : Joi.object({
-                    username : Joi.string().min(8)
-                        .pattern(/^\D[a-zA-Z0-9]{1,30}$/)
-                        .required()
-                        .example('Usertest01')
-                        .description('Tên Đăng Nhập'),
-                    password : Joi.string()
-                        .min(6).required()
-                        .example('helloword')
-                        .description('Mật Khẩu'),
-                    OTP: Joi
-                        .string()
-                        .max(6)
-                        .allow(null,'')
-                        .example('')
-                        .description('OTP')
+                    username : Joi.string().min(8).pattern(/^\D[a-zA-Z0-9]{1,30}$/).required().example('Usertest01').description('Tên Đăng Nhập'),
+                    password : Joi.string().min(6).required().example('helloword').description('Mật Khẩu'),
+                    email : Joi.string().email().required().example('sodogi5277@idcbill.com').description('Email'),
+                    fullname : Joi.string().required().example('Nguyễn Văn A').description('Tên đầy đủ'),
+                    OTP: Joi.string().max(6).allow(null,'').example('').description('OTP')
                 })
             },
             response: {

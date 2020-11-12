@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "bcrypt": "^5.0.0",
     "ioredis": "^4.19.2",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1"
   },
   "devDependencies": {
+    "nodemailer": "^6.4.16",
     "nodemon": "^2.0.6",
     "sha256": "^0.2.0"
   },

@@ -1,11 +1,12 @@
 const _ = require('lodash')
-const bcrypt = require('bcrypt')
 
-const accountModel = require('project/models/Acount.Model')
+
 const ResCode = require('project/constants/ResponseCode')
 const User = require('project/models/Acount.Model');
 const Redis = require('project/helpers/cacheHelper')
 const passwordHelper = require('project/helpers/passwordHelper')
+const myHelper = require('project/helpers/myHelper')
+
 
 const TIME_LOCK_SPAM_LOGIN = 60 * 60;
 const TIME_LOCK_LOGIN_US = 5 * 60;
@@ -23,7 +24,7 @@ module.exports = async (request, reply) => {
             }).code(ResCode.REQUEST_FAIL)
         }
         //Check timeout
-        let [replyIP,replyUser,timeoutIP,timeoutUser] = await Promise.all([
+        let [replyIP, replyUser, timeoutIP, timeoutUser] = await Promise.all([
             Redis.getCathe(`LOGIN-${IP}`),
             Redis.getCathe(`LOGIN-${username}`),
             Redis.getTimeOut(`LOGIN-${IP}`),
@@ -31,14 +32,16 @@ module.exports = async (request, reply) => {
         ]);
 
         if (timeoutIP > 0 && replyIP === 'LOCKED') {
+            const {h,m,s} = myHelper.getTimeFromSecond(timeoutIP);
             return reply.api({
-                message: `[LOCKED] IP : ${IP} bị khóa trong ${Math.floor(timeoutIP / 60)} phút`
+                message: `[LOCKED] IP : ${IP} bị khóa trong ${h} giờ ${m} phút ${s} giây`
             }).code(ResCode.REQUEST_FAIL)
         }
 
         if (timeoutUser > 0) {
+            const {h,m,s} = myHelper.getTimeFromSecond(timeoutUser);
             return reply.api({
-                message: `[LOCKED] User : ${username} bị khóa trong ${Math.floor(timeoutUser / 60)} phút`
+                message: `[LOCKED] User : ${username} bị khóa trong ${h} giờ ${m} phút ${s} giây`
             }).code(ResCode.REQUEST_FAIL)
         }
         //Check password
@@ -52,8 +55,9 @@ module.exports = async (request, reply) => {
             //Process Locked IP
             if (replyIP === 20) {
                 const result = await Redis.setCache(`LOGIN-${IP}`, 'LOCKED', TIME_LOCK_SPAM_LOGIN)
+                const {h,m,s} = myHelper.getTimeFromSecond(TIME_LOCK_SPAM_LOGIN);
                 return reply.api({
-                    message: `[LOCKED SPAM] : IP ${IP} bị khóa trong 60 phút`
+                    message: `[LOCKED SPAM] : IP ${IP} bị khóa trong ${h} giờ ${m} phút ${s} giây`
                 }).code(ResCode.REQUEST_FAIL)
             } else {
                 timeoutIP = await Redis.getTimeOut(`LOGIN-${IP}`)
@@ -61,12 +65,13 @@ module.exports = async (request, reply) => {
             }
             //Process Locked User
             if (replyUser === 3) {
-                const [resultUS,resultIP] = await Promise.all([
+                const [resultUS, resultIP] = await Promise.all([
                     Redis.setCache(`LOGIN-${username}`, 'LOCKED', TIME_LOCK_LOGIN_US),
                     Redis.setCache(`LOGIN-${IP}`, 'LOCKED', TIME_LOCK_LOGIN_IP)
                 ])
+                const {h,m,s} = myHelper.getTimeFromSecond(TIME_LOCK_SPAM_LOGIN);
                 return reply.api({
-                    message: `[LOCKED] IP:${IP} & User: ${username} bị khóa trong vòng 5 phút`
+                    message: `[LOCKED] IP:${IP} & User: ${username} ${h} giờ ${m} phút ${s} giây`
                 }).code(ResCode.REQUEST_FAIL)
             } else {
                 const result = await Redis.setCache(`LOGIN-${username}`, (++replyUser));
