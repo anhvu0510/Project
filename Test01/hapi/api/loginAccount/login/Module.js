@@ -60,14 +60,17 @@ module.exports = async (request, reply) => {
             }
             //Process Locked User
             if (replyUser === 3) {
-                const resultUS = await Redis.setCache(`LOGIN-${username}`, 'LOCKED', TIME_LOCK_LOGIN_US)
-                const resultIP = await Redis.setCache(`LOGIN-${IP}`, 'LOCKED', TIME_LOCK_LOGIN_IP)
+                const [resultUS,resultIP] = await Promise.all([
+                    Redis.setCache(`LOGIN-${username}`, 'LOCKED', TIME_LOCK_LOGIN_US),
+                    Redis.setCache(`LOGIN-${IP}`, 'LOCKED', TIME_LOCK_LOGIN_IP)
+                ])
                 return reply.api({
                     message: `[LOCKED] IP:${IP} & User: ${username} bị khóa trong vòng 5 phút`
                 }).code(ResCode.REQUEST_FAIL)
             } else {
                 const result = await Redis.setCache(`LOGIN-${username}`, (++replyUser));
             }
+
             return reply.api({
                 message: 'Mật Khẩu Không Chính Xác'
             }).code(ResCode.REQUEST_FAIL)
