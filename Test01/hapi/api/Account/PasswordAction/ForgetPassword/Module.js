@@ -3,62 +3,45 @@ const _ = require('lodash')
 const accountModel = require('project/models/Acount.Model')
 const ResCode = require('project/constants/ResponseCode')
 const Redis = require('project/helpers/cacheHelper')
-const mailHelper = require('project/helpers/mailHelper')
-const activeCodeModel = require('project/models/ActiveCode.Model')
 
-let randomText = (length) => {
-    let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+let randomText = (length) =>{
+    let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
-    for (let i = 0; i < length; i++) {
+    for ( let i = 0; i < length; i++ ) {
         result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
     }
     return result;
 }
 
-module.exports = async (request, reply) => {
-    console.log(activeCodeModel.create())
-    const {email} = request.payload;
-    const findAccount = await accountModel.findOne({email}).lean();
-    if (_.get(findAccount, 'id', false) === false) {
-        return reply.api({
-            message: 'Email không tồn tại'
-        }).code(ResCode.REQUEST_FAIL)
-    }
-    const genOTP = randomText(6);
-    const resultSendMail = await mailHelper.SendMailActive(
-        findAccount.email,
-        'ACTIVE CODE FORGET PASSWORD',
-        {
-            content: genOTP,
-            time: 30//seconds
-        }
-    )
-    //Check send mail
-    if (_.get(resultSendMail, 'messageId', false) === false) {
-        return reply.api({
-            message: 'Sự Cố Kỹ Thuật - Vui Lòng Thử Lại Sau'
-        }).code(ResCode.REQUEST_FAIL)
-    }
-
-    const [result, newActive] = await Promise.all([
-        Redis.setCache(`FORGET-OTP-${findAccount.email}`, genOTP, 30),
-        activeCodeModel.create({
-            userID: findAccount.id,
-            code: genOTP,
-        })
-    ])
-
-    if (_.get(newActive, 'id', false) === false) {
-        const result = Redis.delCache(`FORGET-OTP-${findAccount.email}`)
-        return reply.api({
-            message: 'Sự Cố Kỹ Thuật - Vui Lòng Thử Lại Sau'
-        }).code(ResCode.REQUEST_FAIL)
-    }
-
-    return reply.api({
-        message: 'Kiểm tra mail để lấy mã xác nhận'
-    }).code(ResCode.REQUEST_SUCCESS);
-
+module.exports = async (request,h) => {
+    // //Default OTP for Test
+    // const test = JSON.parse(await Redis.getCathe('OTP_RESET_PASS'))
+    // if(_.isNil(test)){
+    //     await Redis.setCache('OTP_RESET_PASS',{text : "AAaaAA",count : 1})
+    // }
+    //
+    //
+    // const {OTP}  = request.params;
+    //
+    //
+    // const Reply = JSON.parse((await Redis.getCathe('OTP_RESET_PASS')))
+    // if(Reply.text === OTP){
+    //     return h.api({message : 'OTP chính xác'}).code(ResCode.REQUEST_SUCCESS);
+    // }else{
+    //     if(Reply.count === 3){
+    //         await Redis.setCache('OTP_RESET_PASS','LOCKED',5*60);
+    //         return h.api({message : '[LOCKED] Không thể nhập trong 5 phút'}).code(ResCode.REQUEST_FAIL);
+    //     }
+    //     if(Reply === 'LOCKED'){
+    //         const timeout = await Redis.getTimeOut("OTP_RESET_PASS");
+    //         return h.api({message : `[LOCKED] Không thể nhập trong ${Math.floor(timeout/60)} phút`}).code(ResCode.REQUEST_FAIL);
+    //     }else{
+    //         Reply.count++;
+    //         await Redis.setCache('OTP_RESET_PASS',Reply)
+    //         return h.api({message : `OTP không chính xác`}).code(ResCode.REQUEST_FAIL);
+    //     }
+    // }
 }
 
 

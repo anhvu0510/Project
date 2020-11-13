@@ -15,6 +15,9 @@ class CacheHelper {
             if(_.isNil(key) || _.isNil(value)){
                 return reject( new Error('Key Error'))
             }
+            if(timeout < 0){
+                return reject(new Error('TimeOut Error'));
+            }
             if(!_.isNil(timeout)){
                 Result = this._Client.set(key,JSON.stringify(value),"EX",parseInt(timeout));
             }else {
@@ -23,7 +26,8 @@ class CacheHelper {
             Result.then(success => {
                 resolve(value)
             }).catch((err) => {
-                reject(err)
+                console.log(err)
+                reject(false)
             })
         })
     }
