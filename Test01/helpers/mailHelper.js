@@ -22,7 +22,7 @@ class MailHelper {
                  from: `${EMAIL_FROM}`,
                  to,
                  subject,
-                 text : `Active Code : ${obj.content} (EXPIRE IN : ${obj.time} Seconds)`
+                 text : `Active Code : ${obj.content}`
              }, (err, res) => {
                  if (err) {
                     reject(err);

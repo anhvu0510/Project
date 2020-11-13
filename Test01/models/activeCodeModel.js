@@ -12,13 +12,13 @@ const Model = {
         }
     },
     attributes : new Schema({
-        userID : {
-            type: Number,
+        username : {
+            type: String,
             required : true
         },
         code : {
             type : String,
-            required:true
+            allow : null
         },
     },{
         timestamps: {

@@ -4,15 +4,8 @@ const ResCode = require('project/constants/ResponseCode')
 const User = require('project/models/accountModel')
 const passwordHelper = require('project/helpers/passwordHelper')
 const cacheHelper = require('project/helpers/cacheHelper')
+const myHelper = require('project/helpers/myHelper')
 
-const randomText = (length) =>{
-    let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for ( let i = 0; i < length; i++ ) {
-        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
-    }
-    return result;
-}
 
 module.exports = async (request,reply) => {
     try{
@@ -42,7 +35,7 @@ module.exports = async (request,reply) => {
         if(replyNumberIP === 4){
             let replyOTP = await cacheHelper.getCathe('OTP-Register');
             if(_.isNil(replyOTP)){
-                const genOTP = randomText(6);
+                const genOTP = myHelper.randomText(6);
                 await cacheHelper.setCache('OTP-Register',genOTP);
                 replyOTP = genOTP
             }
