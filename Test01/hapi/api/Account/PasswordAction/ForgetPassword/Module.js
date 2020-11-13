@@ -1,47 +1,69 @@
 const _ = require('lodash')
 
-const accountModel = require('project/models/Acount.Model')
+const accountModel = require('project/models/accountModel')
 const ResCode = require('project/constants/ResponseCode')
 const Redis = require('project/helpers/cacheHelper')
+const myHelper = require('project/helpers/myHelper')
+const passwordHelper = require('project/helpers/passwordHelper')
 
+const TIME_LOCKED_INPUT =  5*60
 
-let randomText = (length) =>{
-    let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for ( let i = 0; i < length; i++ ) {
-        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+module.exports = async (request, reply) => {
+    const {username, password, OTP} = request.payload;
+    let [cacheOTP, cacheCountOTP, timeoutInputOTP] = await Promise.all([
+        Redis.getCathe(`FORGET-OTP-${username}`),
+        Redis.getCathe(`COUNT-OTP-${username}`),
+        Redis.getTimeOut(`COUNT-OTP-${username}`)
+    ]);
+    //Check time out locked user
+    if (timeoutInputOTP > 0) {
+        const {h, m, s} = myHelper.getTimeFromSecond(timeoutInputOTP);
+        return reply.api({
+            message: `User: ${username} bị khóa nhập liệu trong ${m} phút ${s} giây`
+        }).code(ResCode.REQUEST_FAIL);
     }
-    return result;
-}
 
-module.exports = async (request,h) => {
-    // //Default OTP for Test
-    // const test = JSON.parse(await Redis.getCathe('OTP_RESET_PASS'))
-    // if(_.isNil(test)){
-    //     await Redis.setCache('OTP_RESET_PASS',{text : "AAaaAA",count : 1})
-    // }
-    //
-    //
-    // const {OTP}  = request.params;
-    //
-    //
-    // const Reply = JSON.parse((await Redis.getCathe('OTP_RESET_PASS')))
-    // if(Reply.text === OTP){
-    //     return h.api({message : 'OTP chính xác'}).code(ResCode.REQUEST_SUCCESS);
-    // }else{
-    //     if(Reply.count === 3){
-    //         await Redis.setCache('OTP_RESET_PASS','LOCKED',5*60);
-    //         return h.api({message : '[LOCKED] Không thể nhập trong 5 phút'}).code(ResCode.REQUEST_FAIL);
-    //     }
-    //     if(Reply === 'LOCKED'){
-    //         const timeout = await Redis.getTimeOut("OTP_RESET_PASS");
-    //         return h.api({message : `[LOCKED] Không thể nhập trong ${Math.floor(timeout/60)} phút`}).code(ResCode.REQUEST_FAIL);
-    //     }else{
-    //         Reply.count++;
-    //         await Redis.setCache('OTP_RESET_PASS',Reply)
-    //         return h.api({message : `OTP không chính xác`}).code(ResCode.REQUEST_FAIL);
-    //     }
-    // }
+    if (_.isNil(cacheOTP)) {
+        return reply.api({
+            message: 'Mã OTP đã hết hạn'
+        }).code(ResCode.REQUEST_FAIL);
+    }
+
+    if (OTP !== cacheOTP) {
+        if (_.isNil(cacheCountOTP)) {
+            cacheCountOTP = await Redis.setCache(`COUNT-OTP-${username}`, 1);
+        }
+        if (cacheCountOTP === 3) {
+            const {h,m,s} = myHelper.getTimeFromSecond(TIME_LOCKED_INPUT);
+            const result = await Redis.setCache(`COUNT-OTP-${username}`, 'LOCKED', TIME_LOCKED_INPUT);
+            return reply.api({
+                message: `[LOCKED] User: ${username} bị khóa nhập liệu trong ${m} phút ${s} giây`
+            }).code(ResCode.REQUEST_FAIL);
+        } else {
+            const result = await Redis.setCache(`COUNT-OTP-${username}`, Number(++cacheCountOTP));
+        }
+        return reply.api({
+            message: `Mã OTP không chính xác.`
+        }).code(ResCode.REQUEST_FAIL);
+    }
+    //Delete Cache
+    const [result1, result2] = await Promise.all([
+        Redis.delCache(`COUNT-OTP-${username}`),
+        Redis.delCache(`FORGET-OTP-${username}`),
+    ])
+
+    //Update password
+    const updateResult = await accountModel.update({username}, {password: passwordHelper.hashPassword(password)})
+    if (!updateResult.ok) {
+        return reply.api({
+            message: 'Thay đổi mật khẩu thất bại'
+        }).code(ResCode.REQUEST_FAIL)
+    }
+    return reply.api({
+        message: 'Thay đổi mật khẩu thành công'
+    }).code(ResCode.REQUEST_FAIL)
+
+
 }
 
 

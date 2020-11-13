@@ -4,15 +4,15 @@ const ResponseCode = require('project/constants/ResponseCode')
 
 module.exports = [{
     method : 'POST',
-    path : '/api/forget-password',
+    path : '/api/send-active-code',
     handler : Module,
     options : {
-        description : "Đặt Lại Mật Khẩu",
+        description : "Gửi Active Code",
         auth : false,
         validate : {
             payload : Joi.object({
-                email : Joi.string().email().example('sodogi5277@idcbill.com').required()
-            }).options({abortEarly : true,})
+                username : Joi.string().example('Usertest01').required()
+            })
         },
         response: {
             status: {

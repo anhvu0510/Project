@@ -1,7 +1,7 @@
 const _= require('lodash')
 
 const ResCode = require('project/constants/ResponseCode')
-const User = require('project/models/Acount.Model')
+const User = require('project/models/accountModel')
 const passwordHelper = require('project/helpers/passwordHelper')
 const cacheHelper = require('project/helpers/cacheHelper')
 

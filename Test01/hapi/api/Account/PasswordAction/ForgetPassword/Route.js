@@ -4,15 +4,16 @@ const ResponseCode = require('project/constants/ResponseCode')
 
 module.exports = [{
     method : 'POST',
-    path : '/api/update-password',
+    path : '/api/forget-password',
     handler : Module,
     options : {
         description : "Cập Nhật Mật Khẩu Mới",
         auth : false,
         validate : {
             payload : Joi.object({
-                OTP : Joi.string().max(6).example('AjEglo').required(),
-                newPassword : Joi.string().required().example('hellowordl')
+                username : Joi.string().required().example('Usertest01'),
+                password : Joi.string().required().example('hellowordl'),
+                OTP : Joi.string().max(6).required().example('AU2P5N'),
             })
         },
         response: {

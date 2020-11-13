@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 
 const ResCode = require('project/constants/ResponseCode')
-const User = require('project/models/Acount.Model');
+const User = require('project/models/accountModel');
 const Redis = require('project/helpers/cacheHelper')
 const passwordHelper = require('project/helpers/passwordHelper')
 const myHelper = require('project/helpers/myHelper')
