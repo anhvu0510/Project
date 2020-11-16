@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Async = require('async')
 
 const accountModel = require('project/models/accountModel')
 const ResCode = require('project/constants/ResponseCode')
@@ -30,7 +31,38 @@ module.exports = async (request, reply) => {
     }
 
     const genOTP = myHelper.randomText(6);
-    const resultSendMail = await mailHelper.SendMailActive(
+    //Create queue send mail
+    const sendActiveMailQueue = Async.queue(function (task, callback) {
+        console.log('Running Task ' + task.name)
+        mailHelper.SendMailActive(task.to, task.subject, task.obj)
+            .then(info => {
+                callback(info)
+            })
+    }, 1);
+    //Push send mail action to queue
+    sendActiveMailQueue.push({
+        name: 'Send mail',
+        to: findAccount.email,
+        subject: 'ACTIVE CODE FORGET PASSWORD',
+        obj: {
+            content : genOTP
+        }
+    }, async function(rs) {
+        const findExisted = await activeCodeModel.findOne({username}).lean();
+
+        if (_.get(findExisted, 'id', false) === false) {
+            //Create new active code in database
+            const newCode = await activeCodeModel.create({
+                username,
+                code: genOTP,
+            })
+        } else {
+            //Existed code in database
+            const resultUpdate = await activeCodeModel.update({id : findExisted.id},{code : genOTP})
+        }
+        const result = await Redis.setCache(`RESEND-OTP-${findAccount.username}`, 'ALIVE', TIME_RESEND_ACTIVE_CODE);
+    })
+    /*const resultSendMail = await mailHelper.SendMailActive(
         findAccount.email,
         'ACTIVE CODE FORGET PASSWORD',
         {
@@ -63,7 +95,7 @@ module.exports = async (request, reply) => {
         //Existed code in database
         const resultUpdate = await activeCodeModel.update({id : findeExisted.id},{code : genOTP})
     }
-    const result = Redis.setCache(`RESEND-OTP-${findAccount.username}`, 'ALIVE', TIME_RESEND_ACTIVE_CODE);
+    const result = Redis.setCache(`RESEND-OTP-${findAccount.username}`, 'ALIVE', TIME_RESEND_ACTIVE_CODE);*/
 
     return reply.api({
         message: 'Kiểm tra mail để lấy mã xác nhận'

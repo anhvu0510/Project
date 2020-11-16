@@ -1,4 +1,4 @@
-const AuthenticationConfig = require('./../../config/Authentication');
+const AuthenticationConfig = require('project/config/Authentication');
 
 module.exports = {
   key: AuthenticationConfig.jwtSecretKey,
