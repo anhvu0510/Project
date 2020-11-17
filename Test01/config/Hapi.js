@@ -55,7 +55,7 @@ module.exports = {
     apiReply: {
       isActive: true,
       options: {
-        handleException: (error, request, reply) => {
+          handleException: (error, request, reply) => {
           const project = require('..').getInstance();
           const logger = project.log4js.getLogger('system');
           logger.error(error);
