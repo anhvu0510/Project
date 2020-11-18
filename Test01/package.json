@@ -12,7 +12,8 @@
   "devDependencies": {
     "nodemailer": "^6.4.16",
     "nodemon": "^2.0.6",
-    "sha256": "^0.2.0"
+    "sha256": "^0.2.0",
+    "api-benchmark": "1.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

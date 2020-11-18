@@ -57,6 +57,7 @@ module.exports = async (request, reply) => {
             message: 'Thay đổi mật khẩu thất bại'
         }).code(ResCode.REQUEST_FAIL)
     }
+
     return reply.api({
         message: 'Thay đổi mật khẩu thành công'
     }).code(ResCode.REQUEST_FAIL)

@@ -52,9 +52,9 @@ module.exports = async (request,reply) => {
                 }).code(ResCode.REQUEST_FAIL);
             }
             //delete OTP-Register
-            await cacheHelper.delCache('OTP-Register');
+            const result = await cacheHelper.delCache('OTP-Register');
         }else{
-            await cacheHelper.setCache(clientIP,Number(++replyNumberIP));
+            const result = await cacheHelper.setCache(clientIP,Number(++replyNumberIP));
         }
         //Hash password
         const hashPassword = passwordHelper.hashPassword(password);
