@@ -3,6 +3,7 @@ const Boom = require('boom');
 module.exports = {
   key: '123456',
   async validate(decoded, request, reply) {
+    console.log('222222222222222222222');
     if (!decoded.id) {
       return { isValid: false };
     }    

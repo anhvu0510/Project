@@ -4,7 +4,7 @@ module.exports = {
   isActive: true,
   server: {
     port: 3000,
-    host: '0.0.0.0',
+    host: '127.0.0.1',
     routes: {
       validate: {
         failAction: (request, h, err) => {
@@ -28,7 +28,7 @@ module.exports = {
       isActive: true,
       options: {
         info: {
-          title: 'Test API Documentation',
+          title: 'TEST02',
           version: '1.0.1'
         },
         grouping: 'tags',
@@ -78,8 +78,12 @@ module.exports = {
       }
     },
     apiSecurity: {
-      isActive: false,
+      isActive: true,
       options: {
+        disableSecurity: {
+          allow: true,
+          secretKey: 'sandbox'
+        },
         excludeVersion: [],
         client: {
           app: {
@@ -147,6 +151,7 @@ module.exports = {
             context: (hapi) => {
               return {
                 auth: hapi.request.auth
+                  //auth: false
               };
             }
           }
