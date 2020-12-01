@@ -5,15 +5,24 @@ const ResCode = require('project/constants/ResponseCode')
 const FormData = require('form-data');
 
 
+const PROXY_SERVER = {
+    IP: '139.162.24.32',
+    PORT: 9999,
+};
+
 // const PROXY_SERVER = {
-//     IP: '139.162.24.32',
-//     PORT: 9999,
+//     IP: '31.220.33.13',
+//     PORT: 1212,
 // };
 
-const PROXY_SERVER = {
-    IP: '31.220.33.13',
-    PORT: 1212,
-};
+// const PROXY_SERVER = {
+//     IP: '115.75.1.184',
+//     PORT: 8118,
+// };
+//185.236.202.135:3128
+//1.70.67.28:9999
+//223.242.224.240:9999
+//222.90.110.194:8080
 
 const URL_BASE = 'https://fpt.ai/vision-en';
 const URL_REQUEST = 'https://demo-backend.openfpt.vn/vision/cmt';
@@ -75,23 +84,14 @@ detectIMG = async (url) => {
         const token = await getToken();
         console.log({ token })
 
-
-
-        // page.on('response', response => {
-        //     console.log('RESPONSE',response.url());
-        //     if (response.url().endsWith("your/match"))
-        //         console.log("response code: ", response.status());
-        //     // do something here
-        // });
-
         await browser.close();
         const form = new FormData();
-
         const filePath = await downloadImage(url, 'img02')
-
         form.append('token', token);
         //console.log({ filePath });
         form.append('image', fs.createReadStream(filePath));
+
+        console.log( { "ANHVU" : form });
 
         try {
             const response =  await axios.post(URL_REQUEST, form, {
@@ -99,7 +99,6 @@ detectIMG = async (url) => {
                 proxy: {
                     host: PROXY_SERVER.IP,
                     port: PROXY_SERVER.PORT,
-                    protocol: "https"
                 }
             });
 
