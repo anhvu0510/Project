@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Api Benchmark :: report</title>
+    <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/excanvas.min.js"></script><![endif]-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/jquery.jqplot.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.canvasTextRenderer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.highlighter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.cursor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/jquery.jqplot.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/dark.min.css" type="text/css" />
+
+    <style type="text/css">
+      .jqplot-target {
+        color: #F1F1F1;
+      }
+      table.jqplot-table-legend, table.jqplot-cursor-legend {
+        background-color: rgba(101, 0, 253, 0.89)
+      }
+
+      body {
+        background: #3D3D3D;
+        color: #F1F1F1;
+      }
+
+      a {
+        color: #6699FF;
+      }
+
+      #report-details, #charts {
+        width: 100%;
+        float: left;
+        font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+      }
+
+      #report-details {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .buttons {
+        width: 100%;
+        border-bottom: 1px solid rgb(75, 72, 72);
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        text-align: right;
+      }
+
+      .button {
+        margin-right: 10px;
+        padding: 6px;
+        text-decoration: none;
+      }
+
+      .button.selected {
+        background-color: rgb(56, 56, 56);
+      }
+
+      .chart {
+        width: 60%;
+        height: 450px;
+        float: left;
+      }
+
+      .distchart {
+        width: 96%;
+        height: 450px;
+        float: left;
+      }
+
+      .panel {
+        height: 450px;
+        overflow-y: auto;
+      }
+
+      .route {
+        width: 90%;
+        margin: 3%;
+        padding: 2%;
+        float: left;
+        background-color: #000000;
+        border-radius: 15px;
+      }
+      .stats-details {
+        font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+        font-size: 15px;
+        float: left;
+        width: 36%;
+        padding: 2%;
+      }
+
+      .green {
+        color: green;
+      }
+
+      .red {
+        color: red;
+      }
+
+      .hide {
+        display:none;
+      }
+
+      pre code {
+        overflow-x: auto;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script><!--
+    var data={"benchmark":{"server":{"COMMENT: Hello em là admin Hoàng Sa là của Việt nam nha chú em ":{"name":"server/COMMENT: Hello em là admin Hoàng Sa là của Việt nam nha chú em ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0369351,0.0337362,0.0339289,0.0339677,0.0346336,0.035294,0.0358957,0.0364703,0.0369947,0.037603,0.0381659,0.0387456,0.0397801,0.0403757,0.0409416,0.0415227,0.0420768,0.0426452,0.0432382,0.0437905,0.0443721,0.0449159,0.0459028,0.046464,0.0470185,0.0475638,0.0481146,0.0486696,0.0492294,0.049773],"mean":0.04129217333333333,"singleMean":0.00041292173333333325,"variance":0.00002618575343443678,"deviation":0.005117201719146586,"sem":0.0009342689376269336,"moe":0.0019105799774470791,"rme":4.62697848820845,"p75":0.0460431,"p95":0.04947402,"p99":0.049773,"p999":0.049773},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.458Z","end":"2020-11-23T08:04:21.517Z"},"request":{"data":{"comment":"Hello em là admin Hoàng Sa là của Việt nam nha chú em"}},"response":{"header":{"x-req-start":"1606118661476","x-res-end":"1606118661489","x-response-time":"13","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"92","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Hello em là *** *** *** là của Việt nam nha chú em\"}}","type":"application/json"},"hz":2421.7664493642546},"COMMENT: Mai sinh nhật bác hồ đi quẩy không???? ":{"name":"server/COMMENT: Mai sinh nhật bác hồ đi quẩy không???? ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0117119,0.012229,0.0127154,0.0132251,0.0137469,0.0142659,0.0149218,0.0153003,0.0158103,0.0168625,0.0174013,0.0179268,0.0184674,0.0189915,0.0195165,0.020034,0.0205549,0.0210756,0.0216049,0.0221278,0.023135,0.0240212,0.0245535,0.0252866,0.0258171,0.0245035,0.0250063,0.0255212,0.0260306,0.0265217],"mean":0.01962955,"singleMean":0.00019629549999999998,"variance":0.000022677632086034484,"deviation":0.004762103745828568,"sem":0.0008694372142567183,"moe":0.0017779991031549888,"rme":9.057768023999476,"p75":0.024516,"p95":0.026251595,"p99":0.0265217,"p999":0.0265217},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.520Z","end":"2020-11-23T08:04:21.552Z"},"request":{"data":{"comment":"Mai sinh nhật bác hồ đi quẩy không????"}},"response":{"header":{"x-req-start":"1606118661530","x-res-end":"1606118661531","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"80","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Mai sinh nhật *** *** đi quẩy không????\"}}","type":"application/json"},"hz":5094.36028844268},"COMMENT: haha ngày mai bức lông ":{"name":"server/COMMENT: haha ngày mai bức lông ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0072495,0.0077237,0.0082343,0.0087421,0.0092659,0.0097708,0.0102677,0.010781,0.0118499,0.0123774,0.012869,0.013383,0.0138895,0.0144022,0.0149086,0.0153935,0.0159269,0.0169098,0.0174619,0.017979,0.0184913,0.0190056,0.0195189,0.020034,0.0205622,0.0210742,0.0216685,0.0222368,0.0241458,0.0246669],"mean":0.015359663333333332,"singleMean":0.00015359663333333333,"variance":0.00002604848820654023,"deviation":0.00510377195871252,"sem":0.0009318170100497241,"moe":0.0019055657855516857,"rme":12.406299175947774,"p75":0.019647675,"p95":0.024380295,"p99":0.0246669,"p999":0.0246669},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.552Z","end":"2020-11-23T08:04:21.580Z"},"request":{"data":{"comment":"haha ngày mai bức lông"}},"response":{"header":{"x-req-start":"1606118661558","x-res-end":"1606118661559","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"61","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"haha ngày mai bức lông\"}}","type":"application/json"},"hz":6510.559367729197},"COMMENT: buyoncredit chính phủ chống tham nhũng ":{"name":"server/COMMENT: buyoncredit chính phủ chống tham nhũng ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0073164,0.0077723,0.008265,0.0087647,0.0092612,0.0097558,0.0102995,0.011503,0.0120267,0.0125474,0.0130349,0.0136074,0.0141216,0.0146277,0.0151439,0.0156659,0.0166651,0.0171709,0.0178458,0.0183913,0.0188914,0.0196832,0.0198111,0.0203584,0.0208472,0.0213379,0.0218331,0.0223492,0.0228716,0.0233934],"mean":0.015505433333333336,"singleMean":0.00015505433333333336,"variance":0.000025108075347126434,"deviation":0.005010795879610986,"sem":0.0009148419781056259,"moe":0.0018708518452260048,"rme":12.065782393866266,"p75":0.019947925000000002,"p95":0.02310641,"p99":0.0233934,"p999":0.0233934},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.580Z","end":"2020-11-23T08:04:21.606Z"},"request":{"data":{"comment":"buyoncredit chính phủ chống tham nhũng"}},"response":{"header":{"x-req-start":"1606118661587","x-res-end":"1606118661587","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"66","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"*** *** *** chống tham nhũng\"}}","type":"application/json"},"hz":6449.352162575268},"COMMENT: ditbomay fuckyou socaivu hahaa gietconmemay ":{"name":"server/COMMENT: ditbomay fuckyou socaivu hahaa gietconmemay ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0077611,0.0082623,0.0090104,0.0099071,0.0104188,0.0109407,0.0120063,0.01251,0.0129997,0.0134882,0.0139666,0.0144598,0.0149657,0.0155195,0.0159339,0.0164405,0.0169657,0.0176242,0.0191494,0.019724,0.0202493,0.0207688,0.0212835,0.0218331,0.0223598,0.0229919,0.0234946,0.0245432,0.0250245,0.0255075],"mean":0.016670336666666667,"singleMean":0.00016670336666666668,"variance":0.000028581412629298856,"deviation":0.005346158679771753,"sem":0.0009760705683043423,"moe":0.00199606431218238,"rme":11.973749253508656,"p75":0.0214209,"p95":0.02524185,"p99":0.0255075,"p999":0.0255075},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.607Z","end":"2020-11-23T08:04:21.635Z"},"request":{"data":{"comment":"ditbomay fuckyou socaivu hahaa gietconmemay"}},"response":{"header":{"x-req-start":"1606118661613","x-res-end":"1606118661614","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"65","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"*** *** *** hahaa gietconmemay\"}}","type":"application/json"},"hz":5998.6790908641915},"COMMENT: thằng chó việt cộng Câm mồm và biến đi! ":{"name":"server/COMMENT: thằng chó việt cộng Câm mồm và biến đi! ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0080861,0.0090568,0.0094802,0.0099202,0.0104662,0.0109916,0.0114515,0.0118934,0.0123626,0.0128211,0.0134483,0.0139503,0.0144153,0.0148622,0.0153255,0.0157772,0.0183354,0.0188027,0.0192618,0.0198131,0.0202947,0.0216485,0.0221059,0.0225229,0.0237985,0.0239316,0.0240393,0.0246504,0.0251042,0.0256631],"mean":0.016809353333333336,"singleMean":0.00016809353333333335,"variance":0.00003139290204602299,"deviation":0.005602936912550684,"sem":0.0010229516450941199,"moe":0.002091936114217475,"rme":12.445071935451063,"p75":0.02221015,"p95":0.025355705,"p99":0.0256631,"p999":0.0256631},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.636Z","end":"2020-11-23T08:04:21.664Z"},"request":{"data":{"comment":"thằng chó việt cộng Câm mồm và biến đi!"}},"response":{"header":{"x-req-start":"1606118661643","x-res-end":"1606118661644","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"82","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"thằng chó *** *** Câm mồm và biến đi!\"}}","type":"application/json"},"hz":5949.068831916198},"COMMENT: chết đi thằng chó ăn cứt hahaha ":{"name":"server/COMMENT: chết đi thằng chó ăn cứt hahaha ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0069346,0.007343,0.0077992,0.0085611,0.0091312,0.010045,0.0114791,0.0120257,0.0125623,0.0129984,0.0138876,0.0139984,0.0142779,0.014756,0.0150999,0.0155146,0.0159544,0.0164942,0.016902,0.0179408,0.0183668,0.0187803,0.0192391,0.0196474,0.0211371,0.0212418,0.0212808,0.0214268,0.0223787,0.022769],"mean":0.015332439999999998,"singleMean":0.00015332439999999999,"variance":0.000022749709505241378,"deviation":0.004769665554862456,"sem":0.0008708178053845204,"moe":0.0017808224120113441,"rme":11.614735893382557,"p75":0.019341175,"p95":0.022554335000000002,"p99":0.022769,"p999":0.022769},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.665Z","end":"2020-11-23T08:04:21.690Z"},"request":{"data":{"comment":"chết đi thằng chó ăn cứt hahaha"}},"response":{"header":{"x-req-start":"1606118661671","x-res-end":"1606118661671","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"75","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"chết đi thằng chó ăn cứt hahaha\"}}","type":"application/json"},"hz":6522.119114765817},"COMMENT: concac Mày là thằng ngu nhất tao từng thấy XinĐượcGiaoHợp ":{"name":"server/COMMENT: concac Mày là thằng ngu nhất tao từng thấy XinĐượcGiaoHợp ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0088562,0.0092349,0.0096328,0.010072,0.0105398,0.0109555,0.0113861,0.0126291,0.0128876,0.0133322,0.0145101,0.014582,0.0150298,0.015476,0.0160866,0.0164145,0.0168488,0.0174486,0.0181078,0.0185901,0.0190357,0.0194843,0.0199341,0.0203724,0.020818,0.0212381,0.0216677,0.022098,0.0225343,0.0229461],"mean":0.01609164,"singleMean":0.00016091640000000002,"variance":0.00001942753264731034,"deviation":0.004407667483750373,"sem":0.0008047263022773715,"moe":0.0016456652881572246,"rme":10.22683386004922,"p75":0.020043675,"p95":0.02271961,"p99":0.0229461,"p999":0.0229461},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.690Z","end":"2020-11-23T08:04:21.716Z"},"request":{"data":{"comment":"concac Mày là thằng ngu nhất tao từng thấy XinĐượcGiaoHợp"}},"response":{"header":{"x-req-start":"1606118661699","x-res-end":"1606118661699","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"105","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"*** Mày là thằng ngu nhất tao từng thấy XinĐượcGiaoHợp\"}}","type":"application/json"},"hz":6214.406983999144},"COMMENT: Ngày mai tụi mình đi café ở số 18 Trường Xa nhan ":{"name":"server/COMMENT: Ngày mai tụi mình đi café ở số 18 Trường Xa nhan ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0063298,0.0083422,0.0088006,0.0098237,0.0103714,0.0109779,0.011451,0.011879,0.0123044,0.0127305,0.0131579,0.0142197,0.0146632,0.0151005,0.0164616,0.0168805,0.0180583,0.0181453,0.0184344,0.0203958,0.0208386,0.0213088,0.0216269,0.0220022,0.0224021,0.0228119,0.0232085,0.0236361,0.0240983,0.0245531],"mean":0.01650047333333333,"singleMean":0.0001650047333333333,"variance":0.000029591282199954023,"deviation":0.005439786962736135,"sem":0.0009931646758376985,"moe":0.002031021762088093,"rme":12.3088696976052,"p75":0.021720725,"p95":0.02430296,"p99":0.0245531,"p999":0.0245531},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.717Z","end":"2020-11-23T08:04:21.744Z"},"request":{"data":{"comment":"Ngày mai tụi mình đi café ở số 18 Trường Xa nhan"}},"response":{"header":{"x-req-start":"1606118661722","x-res-end":"1606118661723","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"96","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Ngày mai tụi mình đi café ở số 18 Trường Xa nhan\"}}","type":"application/json"},"hz":6060.432205783189},"COMMENT: Hẹn năm sau về Việt Nam du lịch,vượt biên ":{"name":"server/COMMENT: Hẹn năm sau về Việt Nam du lịch,vượt biên ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.009234,0.0094745,0.009793,0.0101324,0.0104774,0.0108169,0.011212,0.011635,0.012026,0.0124256,0.0128282,0.0136426,0.0148442,0.0153175,0.0157334,0.0059568,0.0176904,0.0181258,0.0185086,0.0189164,0.019341,0.0197563,0.0210951,0.0215293,0.0219095,0.0222853,0.022688,0.0230682,0.0234406,0.0239948],"mean":0.015929959999999996,"singleMean":0.00015929959999999997,"variance":0.00002757972263006896,"deviation":0.005251639994332148,"sem":0.0009588138962640067,"moe":0.0019607744178598936,"rme":12.308721540166417,"p75":0.021203649999999997,"p95":0.023689989999999998,"p99":0.0239948,"p999":0.0239948},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.745Z","end":"2020-11-23T08:04:21.772Z"},"request":{"data":{"comment":"Hẹn năm sau về Việt Nam du lịch,vượt biên"}},"response":{"header":{"x-req-start":"1606118661752","x-res-end":"1606118661752","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"90","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Hẹn năm sau về Việt Nam *** lịch,vượt biên\"}}","type":"application/json"},"hz":6277.4796672433595},"COMMENT: ditbomay fuckyou socaivu gietconmemay hahah ":{"name":"server/COMMENT: ditbomay fuckyou socaivu gietconmemay hahah ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0077708,0.0080189,0.008353,0.0087027,0.0090207,0.0094024,0.0102487,0.0103123,0.0107784,0.0111431,0.0115262,0.0118768,0.0123314,0.0123518,0.0127069,0.0130637,0.0135903,0.0140714,0.0144669,0.0147417,0.0151216,0.0151981,0.0155564,0.015912,0.0162606,0.0166255,0.0169951,0.0173808,0.0177441,0.0195853],"mean":0.013028586666666668,"singleMean":0.00013028586666666669,"variance":0.000010495454780505747,"deviation":0.003239668930694269,"sem":0.0005914799173966306,"moe":0.0012095764310761095,"rme":9.2840187659862,"p75":0.0156453,"p95":0.018572639999999998,"p99":0.0195853,"p999":0.0195853},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.772Z","end":"2020-11-23T08:04:21.795Z"},"request":{"data":{"comment":"ditbomay fuckyou socaivu gietconmemay hahah"}},"response":{"header":{"x-req-start":"1606118661779","x-res-end":"1606118661779","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"56","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"*** *** *** *** hahah\"}}","type":"application/json"},"hz":7675.429619380561},"COMMENT: bopdu con cho de thanggnu,deome,ancuc ":{"name":"server/COMMENT: bopdu con cho de thanggnu,deome,ancuc ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0071542,0.0076241,0.0081698,0.0086846,0.0091364,0.0095921,0.0100416,0.0105322,0.0109903,0.011451,0.0119158,0.012382,0.0130214,0.0135558,0.0140258,0.0144951,0.0149661,0.015437,0.0159066,0.0164153,0.0168837,0.0208435,0.0211783,0.0215579,0.0219305,0.0223205,0.0226664,0.0230282,0.0233872,0.0237655],"mean":0.015101963333333334,"singleMean":0.00015101963333333335,"variance":0.000029535111815505742,"deviation":0.005434621588989039,"sem":0.0009922216119312886,"moe":0.0020290931963994853,"rme":13.435956316493186,"p75":0.0212732,"p95":0.023557434999999998,"p99":0.0237655,"p999":0.0237655},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.796Z","end":"2020-11-23T08:04:21.822Z"},"request":{"data":{"comment":"bopdu con cho de thanggnu,deome,ancuc"}},"response":{"header":{"x-req-start":"1606118661802","x-res-end":"1606118661802","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"70","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"*** con *** de thanggnu,deome,ancuc\"}}","type":"application/json"},"hz":6621.655594890642},"COMMENT: Ngày mai, anh gửi cho chú ít xiền để đi chơi võ_nguyên_giáp :))) ":{"name":"server/COMMENT: Ngày mai, anh gửi cho chú ít xiền để đi chơi võ_nguyên_giáp :))) ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0079138,0.0078592,0.0079192,0.0081564,0.0085927,0.0089962,0.0093919,0.0098586,0.0101396,0.0108407,0.011429,0.0118232,0.0122738,0.0126934,0.0130836,0.0138823,0.0139496,0.0142389,0.0146219,0.0150202,0.0154732,0.0157713,0.0161725,0.0165512,0.0169353,0.0173146,0.0189171,0.0187632,0.0191781,0.0199832],"mean":0.013258129999999998,"singleMean":0.0001325813,"variance":0.000014169064262172412,"deviation":0.003764181752010975,"sem":0.0006872424187085761,"moe":0.001405410746259038,"rme":10.600369330056639,"p75":0.016267175,"p95":0.019540395,"p99":0.0199832,"p999":0.0199832},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.822Z","end":"2020-11-23T08:04:21.846Z"},"request":{"data":{"comment":"Ngày mai, anh gửi cho chú ít xiền để đi chơi võ_nguyên_giáp :)))"}},"response":{"header":{"x-req-start":"1606118661829","x-res-end":"1606118661829","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"100","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Ngày mai, anh gửi *** chú ít xiền để đi chơi *** :)))\"}}","type":"application/json"},"hz":7542.541821508766},"COMMENT: Mày có bị ngu hay không thằng điên,condicho,xaolonanhghet ":{"name":"server/COMMENT: Mày có bị ngu hay không thằng điên,condicho,xaolonanhghet ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0059692,0.0062766,0.0066253,0.0070089,0.0073809,0.0077528,0.0081212,0.0084965,0.0104998,0.0108898,0.0124114,0.0131643,0.0135783,0.0139609,0.0145388,0.0152421,0.0156509,0.0160859,0.0165897,0.0169556,0.0173339,0.0177082,0.0180872,0.0184769,0.0188385,0.0194048,0.0197862,0.020167,0.0205136,0.0208848],"mean":0.013946666666666668,"singleMean":0.00013946666666666668,"variance":0.000024147017389195404,"deviation":0.004913961476161102,"sem":0.0008971625157349401,"moe":0.0018346973446779523,"rme":13.155095683637324,"p75":0.018184625000000003,"p95":0.02068064,"p99":0.0208848,"p999":0.0208848},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.846Z","end":"2020-11-23T08:04:21.870Z"},"request":{"data":{"comment":"Mày có bị ngu hay không thằng điên,condicho,xaolonanhghet"}},"response":{"header":{"x-req-start":"1606118661852","x-res-end":"1606118661852","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"101","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Mày có bị ngu hay không thằng điên,condicho,xaolonanhghet\"}}","type":"application/json"},"hz":7170.172084130018},"COMMENT: Vì quá xấu xa , đồi bại, thối nát nên sợ người dùng mạng phơi bày sự thật.danhbome may ":{"name":"server/COMMENT: Vì quá xấu xa , đồi bại, thối nát nên sợ người dùng mạng phơi bày sự thật.danhbome may ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.006785,0.0071006,0.007428,0.0077281,0.0080391,0.0083732,0.0089489,0.0093353,0.0096784,0.0099961,0.0103152,0.0106372,0.0109957,0.0113625,0.0117355,0.0121146,0.0124807,0.0128538,0.0132259,0.0143434,0.0147453,0.0151465,0.0156055,0.015981,0.0163781,0.0167795,0.0172061,0.0175881,0.0179812,0.0184146],"mean":0.012310103333333334,"singleMean":0.00012310103333333335,"variance":0.000013097324412747122,"deviation":0.003619022576987759,"sem":0.0006607401005122241,"moe":0.0013512135055474984,"rme":10.976459489894602,"p75":0.015699374999999998,"p95":0.018176229999999998,"p99":0.0184146,"p999":0.0184146},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.870Z","end":"2020-11-23T08:04:21.892Z"},"request":{"data":{"comment":"Vì quá xấu xa , đồi bại, thối nát nên sợ người dùng mạng phơi bày sự thật.danhbome may"}},"response":{"header":{"x-req-start":"1606118661876","x-res-end":"1606118661877","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"148","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Vì quá xấu xa , đồi bại, thối nát nên sợ người dùng mạng phơi bày sự thật.danhbome may\"}}","type":"application/json"},"hz":8123.4086580914145},"COMMENT: Ủng hộ Facebook và Google lấy lại tất cả những gì tiên tiến khoa học rời khỏi Việt Nam hơn 200 quốc gia sử dụng là mấy ông đủ giàu rồi chỉ thiếu 1 Việt Nam không sử dụng thì mấy ông không thiệt hại gì cả. Hy vọng Facebook và Google hãy đem những điều tốt lành ra khỏi Việt Nam ":{"name":"server/COMMENT: Ủng hộ Facebook và Google lấy lại tất cả những gì tiên tiến khoa học rời khỏi Việt Nam hơn 200 quốc gia sử dụng là mấy ông đủ giàu rồi chỉ thiếu 1 Việt Nam không sử dụng thì mấy ông không thiệt hại gì cả. Hy vọng Facebook và Google hãy đem những điều tốt lành ra khỏi Việt Nam ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0064007,0.006871,0.0072137,0.0076807,0.0081445,0.0086166,0.0090838,0.0095546,0.0100247,0.0105003,0.010962,0.0114304,0.0122387,0.0128099,0.0132942,0.0137887,0.0142618,0.0147441,0.0152682,0.0157392,0.0162494,0.0167469,0.0172561,0.0177248,0.0182182,0.0186993,0.0191881,0.0196827,0.0201614,0.0208365],"mean":0.013446373333333332,"singleMean":0.00013446373333333332,"variance":0.00001957348175374712,"deviation":0.004424192779903145,"sem":0.000807743394768147,"moe":0.0016518352423008605,"rme":12.284615348333285,"p75":0.017373275,"p95":0.020465195,"p99":0.0208365,"p999":0.0208365},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.892Z","end":"2020-11-23T08:04:21.915Z"},"request":{"data":{"comment":"Ủng hộ Facebook và Google lấy lại tất cả những gì tiên tiến khoa học rời khỏi Việt Nam hơn 200 quốc gia sử dụng là mấy ông đủ giàu rồi chỉ thiếu 1 Việt Nam không sử dụng thì mấy ông không thiệt hại gì cả. Hy vọng Facebook và Google hãy đem những điều tốt lành ra khỏi Việt Nam"}},"response":{"header":{"x-req-start":"1606118661897","x-res-end":"1606118661898","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"382","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"*** *** *** và Google lấy lại tất cả những gì tiên tiến khoa học rời khỏi Việt Nam hơn 200 quốc gia sử dụng là mấy ông đủ giàu rồi chỉ thiếu 1 Việt Nam không sử dụng thì mấy ông không thiệt hại gì cả. Hy vọng *** và Google hãy đem những điều tốt lành ra khỏi Việt Nam\"}}","type":"application/json"},"hz":7436.949541784749},"COMMENT: Nhân dân VN nên đóng cửa chế độ cộng sản tại VN (tay sai Trung Cộng) để đất nước Việt Nam mới có thể sánh vai cùng các cường quốc năm châu! ":{"name":"server/COMMENT: Nhân dân VN nên đóng cửa chế độ cộng sản tại VN (tay sai Trung Cộng) để đất nước Việt Nam mới có thể sánh vai cùng các cường quốc năm châu! ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0069236,0.0075138,0.0079442,0.0083611,0.0087339,0.00918,0.0095429,0.010124,0.0101068,0.0104513,0.0108328,0.0112115,0.0116123,0.0119875,0.0123762,0.012786,0.0131837,0.0135993,0.0139959,0.0143994,0.0148007,0.0151347,0.0155332,0.0159407,0.0163477,0.0167536,0.0171602,0.0175693,0.0179744,0.0183853],"mean":0.012682200000000001,"singleMean":0.000126822,"variance":0.000011505866329655175,"deviation":0.0033920298244053183,"sem":0.0006192970835190269,"moe":0.00126646253579641,"rme":9.98614227654831,"p75":0.015635075,"p95":0.018159305,"p99":0.0183853,"p999":0.0183853},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.916Z","end":"2020-11-23T08:04:21.937Z"},"request":{"data":{"comment":"Nhân dân VN nên đóng cửa chế độ cộng sản tại VN (tay sai Trung Cộng) để đất nước Việt Nam mới có thể sánh vai cùng các cường quốc năm châu!"}},"response":{"header":{"x-req-start":"1606118661922","x-res-end":"1606118661922","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"215","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Nhân dân VN nên đóng cửa chế độ *** *** tại VN (tay sai Trung Cộng) để đất nước Việt Nam mới có thể sánh vai cùng các cường quốc năm châu!\"}}","type":"application/json"},"hz":7885.067259623724},"COMMENT: Dân tộc này ko vì ba lời nói chưa có tính xác thực đâu em trai!Việt_Cộng la Các băng nhóm của em trai chỉ là 1 phần nhỏ cỏn con trong nhu cầu sử dụng phây tơ bóc của người dân! Nhiều người kiếm miếng ăn nhờ nó chứ chưa chắc nhờ mấy em trai đâu! Nên cccc. ":{"name":"server/COMMENT: Dân tộc này ko vì ba lời nói chưa có tính xác thực đâu em trai!Việt_Cộng la Các băng nhóm của em trai chỉ là 1 phần nhỏ cỏn con trong nhu cầu sử dụng phây tơ bóc của người dân! Nhiều người kiếm miếng ăn nhờ nó chứ chưa chắc nhờ mấy em trai đâu! Nên cccc. ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0063534,0.0068286,0.0072746,0.0077273,0.0081872,0.0089237,0.0096693,0.0101858,0.0106377,0.0110961,0.0115369,0.0121185,0.0126181,0.0134929,0.0139698,0.0144417,0.0150354,0.0154844,0.0159319,0.0163768,0.0168254,0.0172799,0.0181934,0.0186473,0.0191281,0.0196467,0.0201231,0.0205807,0.0211303,0.0216065],"mean":0.01403505,"singleMean":0.0001403505,"variance":0.000021974775972241378,"deviation":0.004687726098252902,"sem":0.0008558577758062644,"moe":0.0017502291515238107,"rme":12.47041621885074,"p75":0.018306875,"p95":0.02134459,"p99":0.0216065,"p999":0.0216065},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.938Z","end":"2020-11-23T08:04:21.962Z"},"request":{"data":{"comment":"Dân tộc này ko vì ba lời nói chưa có tính xác thực đâu em trai!Việt_Cộng la Các băng nhóm của em trai chỉ là 1 phần nhỏ cỏn con trong nhu cầu sử dụng phây tơ bóc của người dân! Nhiều người kiếm miếng ăn nhờ nó chứ chưa chắc nhờ mấy em trai đâu! Nên cccc."}},"response":{"header":{"x-req-start":"1606118661943","x-res-end":"1606118661944","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"363","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Dân tộc này ko vì ba lời nói chưa có tính xác thực đâu em trai!Việt_Cộng la Các băng nhóm của em trai chỉ là 1 phần nhỏ cỏn con trong nhu cầu sử dụng phây tơ bóc của người dân! Nhiều người kiếm miếng ăn nhờ nó chứ chưa chắc nhờ mấy em trai đâu! Nên cccc.\"}}","type":"application/json"},"hz":7125.019148488961},"COMMENT: đóng đi coi có yên thân với giới trẻ k . Giới trẻ Việt nam k quan tâm chính trị. Nhưng nếu k có fb cho nó tự sướng và sống ảo thì liệu hồn với tụi nó . Kakkaaaa ":{"name":"server/COMMENT: đóng đi coi có yên thân với giới trẻ k . Giới trẻ Việt nam k quan tâm chính trị. Nhưng nếu k có fb cho nó tự sướng và sống ảo thì liệu hồn với tụi nó . Kakkaaaa ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0092683,0.0095581,0.0099161,0.0103024,0.0107537,0.0111411,0.0116309,0.0120179,0.0124036,0.0130479,0.0136027,0.0140156,0.0144163,0.0148199,0.0152364,0.0156185,0.0160097,0.0164091,0.0168016,0.0172094,0.0176014,0.0180018,0.0184024,0.0188075,0.004789,0.0052131,0.0055996,0.0198629,0.0202684,0.0206638],"mean":0.013779636666666668,"singleMean":0.00013779636666666668,"variance":0.0000192425577161954,"deviation":0.004386633984753617,"sem":0.0008008861283227763,"moe":0.0016378121324200775,"rme":11.885742505693141,"p75":0.0173074,"p95":0.02044633,"p99":0.0206638,"p999":0.0206638},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.962Z","end":"2020-11-23T08:04:21.985Z"},"request":{"data":{"comment":"đóng đi coi có yên thân với giới trẻ k . Giới trẻ Việt nam k quan tâm chính trị. Nhưng nếu k có fb cho nó tự sướng và sống ảo thì liệu hồn với tụi nó . Kakkaaaa"}},"response":{"header":{"x-req-start":"1606118661968","x-res-end":"1606118661969","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"242","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"đóng đi coi có yên thân với giới trẻ k . Giới trẻ Việt nam k quan tâm chính trị. Nhưng nếu k có fb *** nó tự sướng và sống ảo thì liệu hồn với tụi nó . Kakkaaaa\"}}","type":"application/json"},"hz":7257.085394849549},"COMMENT: Sợ nhất là não bọn lãnh đạo nằm ở bên tàu cộng,cavechinhhieu ":{"name":"server/COMMENT: Sợ nhất là não bọn lãnh đạo nằm ở bên tàu cộng,cavechinhhieu ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0089973,0.009327,0.0097106,0.0100516,0.0104087,0.0107715,0.0111283,0.0114914,0.0118498,0.01221,0.0125995,0.0129258,0.0134895,0.0113607,0.0117016,0.012056,0.0124162,0.0127714,0.0131282,0.0135113,0.0138694,0.0142308,0.014593,0.0149598,0.0153146,0.0156765,0.0160401,0.0164166,0.0168537,0.0171502],"mean":0.012900370000000001,"singleMean":0.0001290037,"variance":0.000005125403282862069,"deviation":0.002263935353065999,"sem":0.0004133361538692234,"moe":0.0008452724346625618,"rme":6.552311558990646,"p75":0.0146847,"p95":0.016987125,"p99":0.0171502,"p999":0.0171502},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:21.986Z","end":"2020-11-23T08:04:22.008Z"},"request":{"data":{"comment":"Sợ nhất là não bọn lãnh đạo nằm ở bên tàu cộng,cavechinhhieu"}},"response":{"header":{"x-req-start":"1606118661994","x-res-end":"1606118661995","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"110","date":"Mon, 23 Nov 2020 08:04:21 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Sợ nhất là não bọn *** *** nằm ở bên tàu cộng,cavechinhhieu\"}}","type":"application/json"},"hz":7751.715648465896},"COMMENT: Thách cả ban tuyên giáo tụ mày đóng luôn dc cái nói phét tụ mày đóng tụ mày đói luôn tổng thống mỹ còn chưa dám sờ tụ mày là ai mà dám dọa nên nhớ việt nam đàm phám 20 năm mới vô dc FTA giờ máy cắt facbook đi nó kiệt chết mẹ tụ mày luôn ":{"name":"server/COMMENT: Thách cả ban tuyên giáo tụ mày đóng luôn dc cái nói phét tụ mày đóng tụ mày đói luôn tổng thống mỹ còn chưa dám sờ tụ mày là ai mà dám dọa nên nhớ việt nam đàm phám 20 năm mới vô dc FTA giờ máy cắt facbook đi nó kiệt chết mẹ tụ mày luôn ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0071474,0.0074997,0.0078953,0.0083146,0.0087401,0.0091614,0.0095778,0.0100077,0.0104176,0.0110023,0.0114305,0.0118434,0.0122615,0.0126939,0.01312,0.0135382,0.0139476,0.0143557,0.0147643,0.0164781,0.0169526,0.0174132,0.0178489,0.0182823,0.0195714,0.0200191,0.0204654,0.0217906,0.0223937,0.0228996],"mean":0.014061130000000002,"singleMean":0.0001406113,"variance":0.000022891353429068965,"deviation":0.0047844909268457145,"sem":0.0008735245356040657,"moe":0.0017863576753103143,"rme":12.704225587206109,"p75":0.01795725,"p95":0.022621355,"p99":0.0228996,"p999":0.0228996},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.008Z","end":"2020-11-23T08:04:22.034Z"},"request":{"data":{"comment":"Thách cả ban tuyên giáo tụ mày đóng luôn dc cái nói phét tụ mày đóng tụ mày đói luôn tổng thống mỹ còn chưa dám sờ tụ mày là ai mà dám dọa nên nhớ việt nam đàm phám 20 năm mới vô dc FTA giờ máy cắt facbook đi nó kiệt chết mẹ tụ mày luôn"}},"response":{"header":{"x-req-start":"1606118662015","x-res-end":"1606118662015","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"343","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Thách cả ban tuyên giáo tụ mày đóng luôn dc cái nói phét tụ mày đóng tụ mày đói luôn tổng thống mỹ còn chưa dám *** tụ mày là ai mà dám dọa nên nhớ việt nam đàm phám 20 năm mới vô dc FTA giờ máy cắt facbook đi nó kiệt chết mẹ tụ mày luôn\"}}","type":"application/json"},"hz":7111.803958856792},"COMMENT: Ở VN thấy toàn truy tố gọi là \"\"Cựu cán bộ \"Tức Về hưu đã hạ cánh sau khi No bụng và đã tấu tán của nổi chìm đi mất tiêu !! Ngược lại khi người đang Tại vị đang Nhai nuốt ào ào lại không thấy điều tra khó hiểu??? Vốn thu hồi được bao nhiêu ?ở Tù được mấy năm?? Cộng sản là Hy sinh đời ông cha cửng cố giàu sang cho con cháu !!HAY số 1!! ":{"name":"server/COMMENT: Ở VN thấy toàn truy tố gọi là \"\"Cựu cán bộ \"Tức Về hưu đã hạ cánh sau khi No bụng và đã tấu tán của nổi chìm đi mất tiêu !! Ngược lại khi người đang Tại vị đang Nhai nuốt ào ào lại không thấy điều tra khó hiểu??? Vốn thu hồi được bao nhiêu ?ở Tù được mấy năm?? Cộng sản là Hy sinh đời ông cha cửng cố giàu sang cho con cháu !!HAY số 1!! ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0060348,0.0061391,0.0066167,0.0070453,0.0074808,0.0078901,0.0084015,0.0089125,0.0093674,0.0098149,0.0102627,0.0107106,0.0111723,0.011622,0.0120601,0.0127409,0.0132431,0.0136946,0.0141434,0.0145911,0.015042,0.0160715,0.0165382,0.0169826,0.0174367,0.0178898,0.0183426,0.0187881,0.0192305,0.0196797],"mean":0.012598186666666665,"singleMean":0.00012598186666666665,"variance":0.000018588977906712647,"deviation":0.0043114936978630326,"sem":0.0007871674516203153,"moe":0.0016097574385635447,"rme":12.777691592892296,"p75":0.0166493,"p95":0.01943264,"p99":0.0196797,"p999":0.0196797},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.034Z","end":"2020-11-23T08:04:22.056Z"},"request":{"data":{"comment":"Ở VN thấy toàn truy tố gọi là \"\"Cựu cán bộ \"Tức Về hưu đã hạ cánh sau khi No bụng và đã tấu tán của nổi chìm đi mất tiêu !! Ngược lại khi người đang Tại vị đang Nhai nuốt ào ào lại không thấy điều tra khó hiểu??? Vốn thu hồi được bao nhiêu ?ở Tù được mấy năm?? Cộng sản là Hy sinh đời ông cha cửng cố giàu sang cho con cháu !!HAY số 1!!"}},"response":{"header":{"x-req-start":"1606118662039","x-res-end":"1606118662040","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"476","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Ở VN thấy toàn truy tố gọi là \\\"\\\"Cựu cán bộ \\\"Tức Về hưu đã hạ cánh sau khi No bụng và đã tấu tán của nổi chìm đi mất tiêu !! Ngược lại khi người đang Tại vị đang Nhai nuốt ào ào lại không thấy điều tra khó hiểu??? Vốn thu hồi được bao nhiêu ?ở Tù được mấy năm?? *** *** là Hy sinh đời ông cha cửng cố giàu sang *** con cháu !!HAY số 1!!\"}}","type":"application/json"},"hz":7937.650286178752},"COMMENT: An ninh cơ sở là làm gì ? Để chống giặc ngoại xâm hay để trấn áp, chống lại người dân ? ":{"name":"server/COMMENT: An ninh cơ sở là làm gì ? Để chống giặc ngoại xâm hay để trấn áp, chống lại người dân ? ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0078336,0.0082269,0.0085895,0.0099595,0.0103592,0.010722,0.011096,0.0114836,0.0118747,0.0122743,0.0126535,0.0133766,0.0135905,0.0139656,0.0143372,0.0147121,0.0150821,0.0154652,0.0158601,0.016259,0.0166545,0.0170526,0.0174315,0.0178103,0.0183662,0.0188049,0.0192114,0.0196021,0.0199936,0.0206807],"mean":0.014444299999999998,"singleMean":0.00014444299999999999,"variance":0.000013657580355172414,"deviation":0.003695616370129943,"sem":0.0006747241499351769,"moe":0.0013798108866174368,"rme":9.552632433675823,"p75":0.0175262,"p95":0.020302795,"p99":0.0206807,"p999":0.0206807},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.056Z","end":"2020-11-23T08:04:22.079Z"},"request":{"data":{"comment":"An ninh cơ sở là làm gì ? Để chống giặc ngoại xâm hay để trấn áp, chống lại người dân ?"}},"response":{"header":{"x-req-start":"1606118662064","x-res-end":"1606118662064","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"152","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"An ninh cơ sở là làm gì ? Để chống giặc ngoại xâm hay để trấn áp, chống lại người dân ?\"}}","type":"application/json"},"hz":6923.146154538469},"COMMENT: Mong quốc hội xem xét lại luận này, thật không thể chấp nhận đc công an về xã phường nhiều để làm gì? ":{"name":"server/COMMENT: Mong quốc hội xem xét lại luận này, thật không thể chấp nhận đc công an về xã phường nhiều để làm gì? ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.00582,0.0061977,0.0065428,0.0069086,0.0072595,0.0074769,0.0078397,0.0082067,0.0085813,0.0089562,0.0093369,0.0097059,0.0100802,0.0104735,0.0108479,0.0112488,0.0116145,0.0120021,0.012435,0.0130655,0.0135102,0.0138926,0.0142751,0.0146717,0.0150546,0.0154394,0.0158223,0.016201,0.0166101,0.0169881],"mean":0.011235493333333336,"singleMean":0.00011235493333333336,"variance":0.000011899085253747124,"deviation":0.003449505073738423,"sem":0.0006297905803716853,"moe":0.0012879217368600962,"rme":11.462974509887381,"p75":0.01437425,"p95":0.0167802,"p99":0.0169881,"p999":0.0169881},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.080Z","end":"2020-11-23T08:04:22.099Z"},"request":{"data":{"comment":"Mong quốc hội xem xét lại luận này, thật không thể chấp nhận đc công an về xã phường nhiều để làm gì?"}},"response":{"header":{"x-req-start":"1606118662085","x-res-end":"1606118662085","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"170","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Mong quốc hội xem xét lại luận này, thật không thể chấp nhận đc công an về xã phường nhiều để làm gì?\"}}","type":"application/json"},"hz":8900.365745696374},"COMMENT: Dân Việt lại thêm khổ rồi bọn chính quyen di liemdit thì hiểu con mẹ gì dân đâu chủ yếu là trấn áp chứ không phải là vì dân ":{"name":"server/COMMENT: Dân Việt lại thêm khổ rồi bọn chính quyen di liemdit thì hiểu con mẹ gì dân đâu chủ yếu là trấn áp chứ không phải là vì dân ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0062651,0.0066129,0.0069766,0.0073512,0.0077277,0.0081052,0.0084835,0.0088871,0.0092869,0.0096965,0.0103269,0.0107533,0.0111806,0.0115694,0.0119768,0.0123455,0.012577,0.012954,0.0133368,0.0136813,0.0140684,0.0146808,0.014949,0.0153005,0.0156802,0.0160609,0.0164586,0.016846,0.0172572,0.0175975],"mean":0.011966446666666665,"singleMean":0.00011966446666666665,"variance":0.000012119887843954023,"deviation":0.0034813629290773498,"sem":0.0006356070023726408,"moe":0.0012998163198520503,"rme":10.862174512278363,"p75":0.015036875,"p95":0.017410335,"p99":0.0175975,"p999":0.0175975},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.099Z","end":"2020-11-23T08:04:22.120Z"},"request":{"data":{"comment":"Dân Việt lại thêm khổ rồi bọn chính quyen di liemdit thì hiểu con mẹ gì dân đâu chủ yếu là trấn áp chứ không phải là vì dân"}},"response":{"header":{"x-req-start":"1606118662105","x-res-end":"1606118662105","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"193","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Dân Việt lại thêm khổ rồi bọn chính quyen *** *** thì hiểu con mẹ gì dân đâu chủ yếu là trấn áp chứ không phải là vì dân\"}}","type":"application/json"},"hz":8356.699593920112},"COMMENT: Mày đừng đổ cho ai - đó chính là tham vọng bành trướng của mày ! Thế giới này quá rành thủ đoạn của mày ! ":{"name":"server/COMMENT: Mày đừng đổ cho ai - đó chính là tham vọng bành trướng của mày ! Thế giới này quá rành thủ đoạn của mày ! ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0057411,0.0062688,0.0066517,0.0070218,0.0073936,0.0077786,0.0081602,0.008552,0.0089274,0.0093178,0.0096875,0.0100802,0.0104741,0.0108519,0.0112377,0.0116182,0.0120015,0.0123799,0.0127767,0.0146287,0.0150702,0.0154643,0.0158556,0.0162369,0.016623,0.0170064,0.0173924,0.0177791,0.0188805,0.0189697],"mean":0.012027583333333331,"singleMean":0.00012027583333333331,"variance":0.000016821736433850574,"deviation":0.004101431022685932,"sem":0.0007488154297255225,"moe":0.0015313275537886936,"rme":12.731797497047983,"p75":0.015950925,"p95":0.01892064,"p99":0.0189697,"p999":0.0189697},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.120Z","end":"2020-11-23T08:04:22.142Z"},"request":{"data":{"comment":"Mày đừng đổ cho ai - đó chính là tham vọng bành trướng của mày ! Thế giới này quá rành thủ đoạn của mày !"}},"response":{"header":{"x-req-start":"1606118662125","x-res-end":"1606118662126","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"169","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Mày đừng đổ *** ai - đó chính là tham vọng bành trướng của mày ! Thế giới này quá rành *** *** của mày !\"}}","type":"application/json"},"hz":8314.222169873417},"COMMENT: Cám ơn đất nước Mỹ, chánh quyền Mỹ, nhân dân Mỹ! ":{"name":"server/COMMENT: Cám ơn đất nước Mỹ, chánh quyền Mỹ, nhân dân Mỹ! ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0083154,0.0087273,0.0091793,0.0095834,0.0100073,0.0107076,0.0108304,0.0112361,0.0117414,0.0121068,0.0125057,0.0129265,0.0139662,0.0143923,0.0148508,0.015332,0.0157905,0.016244,0.0167934,0.017228,0.0178945,0.0184938,0.0189431,0.0194085,0.0198314,0.0202731,0.0207112,0.0211898,0.0215703,0.0220144],"mean":0.015093149999999998,"singleMean":0.0001509315,"variance":0.000018391231014310346,"deviation":0.00428849985592985,"sem":0.0007829693696501446,"moe":0.0016011723609345456,"rme":10.608602981713862,"p75":0.01905945,"p95":0.021770145,"p99":0.0220144,"p999":0.0220144},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.142Z","end":"2020-11-23T08:04:22.167Z"},"request":{"data":{"comment":"Cám ơn đất nước Mỹ, chánh quyền Mỹ, nhân dân Mỹ!"}},"response":{"header":{"x-req-start":"1606118662149","x-res-end":"1606118662150","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"102","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Cám ơn đất nước Mỹ, chánh quyền Mỹ, nhân dân Mỹ!\"}}","type":"application/json"},"hz":6625.522173966337},"COMMENT: Nếu không có Mỹ Trung Cộng đả chiếm hết biển đảo của Việt Nam từ lâu. ":{"name":"server/COMMENT: Nếu không có Mỹ Trung Cộng đả chiếm hết biển đảo của Việt Nam từ lâu. ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0083516,0.0090041,0.0093656,0.0097221,0.0100839,0.0104415,0.0108076,0.0111734,0.0128644,0.0129454,0.0129708,0.0129914,0.0131341,0.013447,0.0138094,0.0142743,0.0146341,0.0150128,0.0153943,0.0050477,0.0054147,0.0057867,0.0162998,0.0166803,0.0170619,0.0174325,0.0180542,0.0181645,0.0185725,0.0192233],"mean":0.012938863333333333,"singleMean":0.00012938863333333334,"variance":0.000015688564254126438,"deviation":0.003960879227409798,"sem":0.000723154300135327,"moe":0.0014788505437767438,"rme":11.429524415540445,"p75":0.016394924999999998,"p95":0.018865359999999998,"p99":0.0192233,"p999":0.0192233},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.167Z","end":"2020-11-23T08:04:22.188Z"},"request":{"data":{"comment":"Nếu không có Mỹ Trung Cộng đả chiếm hết biển đảo của Việt Nam từ lâu."}},"response":{"header":{"x-req-start":"1606118662173","x-res-end":"1606118662173","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"131","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Nếu không có Mỹ Trung Cộng đả chiếm hết biển đảo của Việt Nam từ lâu.\"}}","type":"application/json"},"hz":7728.654165654427},"COMMENT: Trung Quốc càng tỏ thái độ càng lộ rõ hơn sự xấu,danhbome quyết tâm gian dối thì sẽ lãnh hậu quả, TQ vi như con ruồi quây bây rồi cũng bị cái vợt đập cho. ":{"name":"server/COMMENT: Trung Quốc càng tỏ thái độ càng lộ rõ hơn sự xấu,danhbome quyết tâm gian dối thì sẽ lãnh hậu quả, TQ vi như con ruồi quây bây rồi cũng bị cái vợt đập cho. ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0057478,0.0061492,0.006517,0.0069012,0.0073095,0.007696,0.0081196,0.0084976,0.0095201,0.0100098,0.0103611,0.0107639,0.011177,0.0117845,0.0121978,0.0126093,0.0130131,0.0134217,0.0138233,0.0142414,0.0146406,0.0150494,0.0154725,0.0162429,0.0167571,0.0172656,0.0176927,0.0180969,0.0185204,0.0190065],"mean":0.012286849999999998,"singleMean":0.0001228685,"variance":0.00001653424176810345,"deviation":0.004066231888137155,"sem":0.000742388976393181,"moe":0.001518185456724055,"rme":12.356181256579637,"p75":0.0156651,"p95":0.018739145,"p99":0.0190065,"p999":0.0190065},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.189Z","end":"2020-11-23T08:04:22.210Z"},"request":{"data":{"comment":"Trung Quốc càng tỏ thái độ càng lộ rõ hơn sự xấu,danhbome quyết tâm gian dối thì sẽ lãnh hậu quả, TQ vi như con ruồi quây bây rồi cũng bị cái vợt đập cho."}},"response":{"header":{"x-req-start":"1606118662194","x-res-end":"1606118662194","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"236","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Trung Quốc càng tỏ thái độ càng lộ rõ hơn sự xấu,danhbome quyết tâm gian dối thì sẽ lãnh hậu quả, TQ vi như con ruồi quây bây rồi cũng bị cái vợt đập cho.\"}}","type":"application/json"},"hz":8138.782519522904},"COMMENT: Mấy trăm tờ báo đảng tuyên truyền nhồi sọ dân đen chưa đủ sao ? Đồi đống f b , vì thối nát có hệ thống dân ko còn tin tưởng ":{"name":"server/COMMENT: Mấy trăm tờ báo đảng tuyên truyền nhồi sọ dân đen chưa đủ sao ? Đồi đống f b , vì thối nát có hệ thống dân ko còn tin tưởng ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0053742,0.0057343,0.0060893,0.0064589,0.006825,0.0072001,0.0076022,0.0079856,0.0083648,0.0087606,0.0091432,0.0095275,0.010277,0.0106588,0.0110464,0.0115233,0.011987,0.0123099,0.0126912,0.0130712,0.0134522,0.0138767,0.0142957,0.0146953,0.0150665,0.0154502,0.015833,0.0162386,0.016597,0.0170399],"mean":0.01117252,"singleMean":0.0001117252,"variance":0.000013027814798896552,"deviation":0.003609406433043604,"sem":0.0006589844408607473,"moe":0.001347623181560228,"rme":12.061944678194607,"p75":0.0143956,"p95":0.016796305,"p99":0.0170399,"p999":0.0170399},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.210Z","end":"2020-11-23T08:04:22.229Z"},"request":{"data":{"comment":"Mấy trăm tờ báo đảng tuyên truyền nhồi sọ dân đen chưa đủ sao ? Đồi đống f b , vì thối nát có hệ thống dân ko còn tin tưởng"}},"response":{"header":{"x-req-start":"1606118662215","x-res-end":"1606118662215","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"196","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Mấy trăm tờ báo *** tuyên truyền nhồi sọ dân đen chưa đủ sao ? Đồi đống f b , vì thối nát có hệ thống dân ko còn tin tưởng\"}}","type":"application/json"},"hz":8950.53219864453},"COMMENT: Một xã hội cũng như một gia đình thu nhỏ, nếu cha mẹ gương mẫu trau dồi kiến thức mở rộng tầm nhìn học hỏi những điều hay lẽ phải trên thế giới sẽ là chỗ dựa vững chắc để con cái họ có điểm tựa bay cao bay xa hòa nhập vào thế giới rộng lớn bên ngoài. Còn cha mẹ độc đoán chỉ quanh đi quẩn lại trong nhà không chịu mở mang tầm nhìn ra ngoài thì chẳng khác gì tổ chim bị nhốt vào lồng trong khi bạn bè chúng đang tung bay khắp bầu trời, làm những gì chúng ưa ăn những gì chúng thích ":{"name":"server/COMMENT: Một xã hội cũng như một gia đình thu nhỏ, nếu cha mẹ gương mẫu trau dồi kiến thức mở rộng tầm nhìn học hỏi những điều hay lẽ phải trên thế giới sẽ là chỗ dựa vững chắc để con cái họ có điểm tựa bay cao bay xa hòa nhập vào thế giới rộng lớn bên ngoài. Còn cha mẹ độc đoán chỉ quanh đi quẩn lại trong nhà không chịu mở mang tầm nhìn ra ngoài thì chẳng khác gì tổ chim bị nhốt vào lồng trong khi bạn bè chúng đang tung bay khắp bầu trời, làm những gì chúng ưa ăn những gì chúng thích ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.005531,0.005992,0.006484,0.0073068,0.0078726,0.0088598,0.0093655,0.009878,0.0105319,0.0110344,0.011542,0.0126836,0.0129446,0.0137067,0.0143981,0.0151243,0.0156522,0.0161582,0.0166675,0.0171813,0.0176759,0.0181848,0.0186945,0.0191906,0.0196931,0.0202026,0.0207155,0.0212256,0.0217352,0.0222406],"mean":0.014282430000000002,"singleMean":0.00014282430000000002,"variance":0.000026516031554586206,"deviation":0.0051493719572959775,"sem":0.0009401423926651786,"moe":0.0019225911930002902,"rme":13.461233088489072,"p75":0.018818525,"p95":0.02196263,"p99":0.0222406,"p999":0.0222406},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.230Z","end":"2020-11-23T08:04:22.254Z"},"request":{"data":{"comment":"Một xã hội cũng như một gia đình thu nhỏ, nếu cha mẹ gương mẫu trau dồi kiến thức mở rộng tầm nhìn học hỏi những điều hay lẽ phải trên thế giới sẽ là chỗ dựa vững chắc để con cái họ có điểm tựa bay cao bay xa hòa nhập vào thế giới rộng lớn bên ngoài. Còn cha mẹ độc đoán chỉ quanh đi quẩn lại trong nhà không chịu mở mang tầm nhìn ra ngoài thì chẳng khác gì tổ chim bị nhốt vào lồng trong khi bạn bè chúng đang tung bay khắp bầu trời, làm những gì chúng ưa ăn những gì chúng thích"}},"response":{"header":{"x-req-start":"1606118662234","x-res-end":"1606118662235","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"732","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Một xã hội cũng như một gia đình thu nhỏ, nếu cha mẹ gương mẫu trau dồi kiến thức mở rộng tầm nhìn học hỏi những điều hay lẽ phải trên thế giới sẽ là chỗ dựa vững chắc để con cái họ có điểm tựa bay cao bay xa hòa nhập vào thế giới rộng lớn bên ngoài. Còn cha mẹ độc đoán chỉ quanh đi quẩn lại trong nhà không chịu mở mang tầm nhìn ra ngoài thì chẳng khác gì tổ *** bị nhốt vào lồng trong khi bạn bè chúng đang tung bay khắp bầu trời, làm những gì chúng ưa ăn những gì chúng thích\"}}","type":"application/json"},"hz":7001.609670063146},"COMMENT: Tao ko hiểu bọn mày dựa vào cái gì mà đóng được fb , trình độ thì lè tè dưới cái đáy quần mà tưởng trình độ siêu nhân , đóng hộ cái để tao chóng mắt lên tao xem bọn mày đóng fb như thế nào ":{"name":"server/COMMENT: Tao ko hiểu bọn mày dựa vào cái gì mà đóng được fb , trình độ thì lè tè dưới cái đáy quần mà tưởng trình độ siêu nhân , đóng hộ cái để tao chóng mắt lên tao xem bọn mày đóng fb như thế nào ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0057656,0.006152,0.0065456,0.0069567,0.0073423,0.0077348,0.008168,0.0085968,0.0090127,0.0094389,0.0098644,0.0102873,0.0107886,0.0112281,0.011658,0.0120822,0.0125254,0.0129282,0.0133555,0.0137788,0.0142072,0.0146319,0.0150612,0.0154999,0.0159399,0.0163762,0.0167907,0.0172162,0.0176415,0.0180756],"mean":0.011855006666666666,"singleMean":0.00011855006666666666,"variance":0.000014209271645471266,"deviation":0.003769518755155791,"sem":0.00068821681771254,"moe":0.0014074033922221443,"rme":11.871805995515912,"p75":0.015170875,"p95":0.017836845,"p99":0.0180756,"p999":0.0180756},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.255Z","end":"2020-11-23T08:04:22.275Z"},"request":{"data":{"comment":"Tao ko hiểu bọn mày dựa vào cái gì mà đóng được fb , trình độ thì lè tè dưới cái đáy quần mà tưởng trình độ siêu nhân , đóng hộ cái để tao chóng mắt lên tao xem bọn mày đóng fb như thế nào"}},"response":{"header":{"x-req-start":"1606118662260","x-res-end":"1606118662260","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"286","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Tao ko hiểu bọn mày dựa vào cái gì mà đóng được fb , trình độ thì lè tè dưới cái đáy quần mà tưởng trình độ siêu nhân , đóng hộ cái để tao chóng mắt lên tao xem bọn mày đóng fb như thế nào\"}}","type":"application/json"},"hz":8435.254640655341},"COMMENT: Chắc muốn dùng của a trai cho dễ kiểm soát đây ":{"name":"server/COMMENT: Chắc muốn dùng của a trai cho dễ kiểm soát đây ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0081129,0.0080984,0.0083537,0.0086874,0.0090389,0.0093828,0.0085915,0.0085637,0.0088006,0.0091401,0.0094725,0.0098208,0.0102124,0.0105234,0.0113164,0.011672,0.0120305,0.0123863,0.0141628,0.0142903,0.0143429,0.0143685,0.0147202,0.0150167,0.015948,0.0172242,0.0177049,0.0180349,0.0184492,0.0189093],"mean":0.012245873333333336,"singleMean":0.00012245873333333336,"variance":0.000012626965010988505,"deviation":0.0035534441055106673,"sem":0.0006487671644739867,"moe":0.0013267288513493028,"rme":10.834089290617921,"p75":0.014794324999999999,"p95":0.018656245,"p99":0.0189093,"p999":0.0189093},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.275Z","end":"2020-11-23T08:04:22.298Z"},"request":{"data":{"comment":"Chắc muốn dùng của a trai cho dễ kiểm soát đây"}},"response":{"header":{"x-req-start":"1606118662282","x-res-end":"1606118662283","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"101","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Chắc muốn dùng của a trai *** dễ kiểm soát đây\"}}","type":"application/json"},"hz":8166.016198109729},"COMMENT: Giữa đêm dám xua 3000 quân đi giết dân , chuyện gì mà bọn cộng sản không giám làm . Làm mọi cách để giữ chế độ ":{"name":"server/COMMENT: Giữa đêm dám xua 3000 quân đi giết dân , chuyện gì mà bọn cộng sản không giám làm . Làm mọi cách để giữ chế độ ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0058673,0.0060968,0.0064504,0.0068075,0.0071739,0.0075397,0.0079047,0.0083159,0.0086192,0.009019,0.0093899,0.0098027,0.0101879,0.0106845,0.0110687,0.0115101,0.0118793,0.0122781,0.0126434,0.0133479,0.0137202,0.0140979,0.0145491,0.0149362,0.0153147,0.0156954,0.0160726,0.0170988,0.0174791,0.0185976],"mean":0.011471616666666669,"singleMean":0.00011471616666666669,"variance":0.000013759599269712646,"deviation":0.0037093933829822697,"sem":0.0006772394768399296,"moe":0.001384954730137656,"rme":12.072881882132181,"p75":0.014645875000000001,"p95":0.017982425,"p99":0.0185976,"p999":0.0185976},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.298Z","end":"2020-11-23T08:04:22.319Z"},"request":{"data":{"comment":"Giữa đêm dám xua 3000 quân đi giết dân , chuyện gì mà bọn cộng sản không giám làm . Làm mọi cách để giữ chế độ"}},"response":{"header":{"x-req-start":"1606118662303","x-res-end":"1606118662304","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"177","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Giữa đêm dám xua 3000 quân đi giết dân , chuyện gì mà bọn *** *** không giám làm . Làm mọi cách để giữ chế độ\"}}","type":"application/json"},"hz":8717.167153133021},"COMMENT: Cho dù có dám đóng buconcu cửa thật đi chăng, thì người dân cũng đã quá rỏ bộ mặt thật của đảng cộng nô (tay sai Trung cộng) và nhân dân xem họ nguy hiển không khác gì giặc cộng sản Trung cộng! ":{"name":"server/COMMENT: Cho dù có dám đóng buconcu cửa thật đi chăng, thì người dân cũng đã quá rỏ bộ mặt thật của đảng cộng nô (tay sai Trung cộng) và nhân dân xem họ nguy hiển không khác gì giặc cộng sản Trung cộng! ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.005463,0.005881,0.0063005,0.0068322,0.0072656,0.0076946,0.008111,0.0085292,0.0089522,0.0093778,0.0098076,0.0104868,0.011005,0.0114442,0.0128015,0.0133139,0.0137587,0.0142017,0.0147442,0.0151384,0.0161848,0.0166328,0.0171172,0.0180715,0.0186446,0.0190906,0.0195131,0.0199389,0.0203656,0.0207982],"mean":0.012915546666666668,"singleMean":0.00012915546666666667,"variance":0.00002406571471567816,"deviation":0.004905681880807006,"sem":0.0008956508753541222,"moe":0.0018316060400991798,"rme":14.181405459408966,"p75":0.017355775,"p95":0.02056027,"p99":0.0207982,"p999":0.0207982},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.319Z","end":"2020-11-23T08:04:22.342Z"},"request":{"data":{"comment":"Cho dù có dám đóng buconcu cửa thật đi chăng, thì người dân cũng đã quá rỏ bộ mặt thật của đảng cộng nô (tay sai Trung cộng) và nhân dân xem họ nguy hiển không khác gì giặc cộng sản Trung cộng!"}},"response":{"header":{"x-req-start":"1606118662324","x-res-end":"1606118662325","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"271","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"*** dù có dám đóng *** cửa thật đi chăng, thì người dân cũng đã quá rỏ bộ mặt thật của *** cộng nô (tay sai Trung cộng) và nhân dân xem họ nguy hiển không khác gì giặc *** *** Trung cộng!\"}}","type":"application/json"},"hz":7742.606842812693},"COMMENT: Chả dám đóng nếu đóng dân biểu còn nhiều hơn là mấy năm im lặng rồi.... thời này có học thức nhiều lắm. Mấy anh có chức quyền lực đảng nên nhớ ":{"name":"server/COMMENT: Chả dám đóng nếu đóng dân biểu còn nhiều hơn là mấy năm im lặng rồi.... thời này có học thức nhiều lắm. Mấy anh có chức quyền lực đảng nên nhớ ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0056685,0.0059508,0.0063105,0.0067023,0.0070871,0.0074875,0.0078737,0.0082696,0.008667,0.0090644,0.0094585,0.0098629,0.0102838,0.0107301,0.0111138,0.011514,0.0119171,0.0134778,0.0138917,0.0143132,0.0148371,0.0172381,0.0176757,0.0180895,0.0185382,0.0190186,0.0195373,0.0201212,0.020512,0.0210751],"mean":0.01254290333333333,"singleMean":0.0001254290333333333,"variance":0.00002501849182929885,"deviation":0.00500184884110854,"sem":0.000913208479835407,"moe":0.0018675113412634072,"rme":14.888987753739691,"p75":0.01777915,"p95":0.020765395,"p99":0.0210751,"p999":0.0210751},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.343Z","end":"2020-11-23T08:04:22.366Z"},"request":{"data":{"comment":"Chả dám đóng nếu đóng dân biểu còn nhiều hơn là mấy năm im lặng rồi.... thời này có học thức nhiều lắm. Mấy anh có chức quyền lực đảng nên nhớ"}},"response":{"header":{"x-req-start":"1606118662348","x-res-end":"1606118662348","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"224","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Chả dám đóng nếu đóng dân biểu còn nhiều hơn là mấy năm im lặng rồi.... thời này có học thức nhiều lắm. Mấy anh có chức quyền lực *** nên nhớ\"}}","type":"application/json"},"hz":7972.635787939583},"COMMENT: Bọn chúng ngủ người ta chỉ chi nhưng chúng không chịu nhận, lđ VN chúng vẫn chấp nhận ngủ. ":{"name":"server/COMMENT: Bọn chúng ngủ người ta chỉ chi nhưng chúng không chịu nhận, lđ VN chúng vẫn chấp nhận ngủ. ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0068176,0.0072305,0.0076647,0.0078666,0.0082305,0.0086464,0.0090255,0.0094633,0.009856,0.0102342,0.0114107,0.0118046,0.0121983,0.0125879,0.0129522,0.0133471,0.0137358,0.0140923,0.0145714,0.0150303,0.0154408,0.0158624,0.0161402,0.0154378,0.0158331,0.0161304,0.0164806,0.0168324,0.0172069,0.0175679],"mean":0.012656613333333335,"singleMean":0.00012656613333333335,"variance":0.000011610080963264368,"deviation":0.0034073568881560334,"sem":0.0006220954097045556,"moe":0.0012721851128458161,"rme":10.051544432469159,"p75":0.015840424999999998,"p95":0.017369350000000002,"p99":0.0175679,"p999":0.0175679},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.366Z","end":"2020-11-23T08:04:22.387Z"},"request":{"data":{"comment":"Bọn chúng ngủ người ta chỉ chi nhưng chúng không chịu nhận, lđ VN chúng vẫn chấp nhận ngủ."}},"response":{"header":{"x-req-start":"1606118662373","x-res-end":"1606118662373","x-response-time":"0","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"152","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Bọn chúng ngủ người ta chỉ chi nhưng chúng không chịu nhận, lđ VN chúng vẫn chấp nhận ngủ.\"}}","type":"application/json"},"hz":7901.007747201462},"COMMENT: Khi có mạng xã hội ! Sự Lưu manh giả danh trí thức thất đức nhưng đi giảng đạo Bạo Chúa úa ra Máu của Đám Ký Sinh Trùng Bầy linh Cẫu được phơi bày cho thiên hạ biết nên chúng muốn đóng cửa để Bảo Vệ sự lưu manh của chúng giống Ông nội mafia Cộng sản China ":{"name":"server/COMMENT: Khi có mạng xã hội ! Sự Lưu manh giả danh trí thức thất đức nhưng đi giảng đạo Bạo Chúa úa ra Máu của Đám Ký Sinh Trùng Bầy linh Cẫu được phơi bày cho thiên hạ biết nên chúng muốn đóng cửa để Bảo Vệ sự lưu manh của chúng giống Ông nội mafia Cộng sản China ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0064505,0.0068414,0.0072224,0.007611,0.0080114,0.0084132,0.0088197,0.009223,0.0096767,0.0100587,0.0104884,0.010907,0.0127063,0.0130916,0.0134935,0.0139096,0.0143269,0.0148036,0.0152802,0.0157438,0.0163369,0.0170148,0.0173831,0.0177908,0.0181807,0.0185904,0.0189916,0.0194631,0.0199379,0.0204666],"mean":0.013374493333333333,"singleMean":0.00013374493333333332,"variance":0.000019829666003402306,"deviation":0.004453051313807455,"sem":0.0008130122181001198,"moe":0.001662609986014745,"rme":12.43119978138545,"p75":0.017485024999999998,"p95":0.020175815,"p99":0.0204666,"p999":0.0204666},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.388Z","end":"2020-11-23T08:04:22.410Z"},"request":{"data":{"comment":"Khi có mạng xã hội ! Sự Lưu manh giả danh trí thức thất đức nhưng đi giảng đạo Bạo Chúa úa ra Máu của Đám Ký Sinh Trùng Bầy linh Cẫu được phơi bày cho thiên hạ biết nên chúng muốn đóng cửa để Bảo Vệ sự lưu manh của chúng giống Ông nội mafia Cộng sản China"}},"response":{"header":{"x-req-start":"1606118662393","x-res-end":"1606118662394","x-response-time":"1","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"367","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":1000,\"data\":{\"message\":\"Khi có mạng xã hội ! Sự Lưu manh giả danh trí thức thất đức nhưng đi giảng đạo Bạo Chúa úa ra Máu của Đám Ký Sinh Trùng Bầy linh Cẫu được phơi bày *** thiên hạ biết nên chúng muốn đóng cửa để Bảo Vệ sự lưu manh của chúng giống Ông nội mafia *** *** China\"}}","type":"application/json"},"hz":7476.918751813154},"COMMENT:  ":{"name":"server/COMMENT:  ","href":"http://127.0.0.1:3000/api/comment","stats":{"sample":[0.0073091,0.0077304,0.008406,0.0086317,0.0092393,0.0095837,0.0100057,0.0104352,0.0108564,0.0112994,0.0117439,0.012203,0.0126573,0.0131228,0.0135325,0.013989,0.0144474,0.0149681,0.0154499,0.0158901,0.0163235,0.0167499,0.0171574,0.0175725,0.0179835,0.0183924,0.0189007,0.0194392,0.0198936,0.0203084],"mean":0.013807399999999997,"singleMean":0.00013807399999999997,"variance":0.0000154478885862069,"deviation":0.0039303802088610845,"sem":0.0007175859666550274,"moe":0.001467463301809531,"rme":10.62809291980772,"p75":0.017261175,"p95":0.02008026,"p99":0.0203084,"p999":0.0203084},"errors":{},"options":{"method":"post","concurrencyLevel":100,"start":"2020-11-23T08:04:22.411Z","end":"2020-11-23T08:04:22.433Z"},"request":{"data":{"comment":""}},"response":{"header":{"x-req-start":"1606118662415","x-res-end":"1606118662418","x-response-time":"3","content-type":"application/json; charset=utf-8","cache-control":"no-cache","content-length":"72","date":"Mon, 23 Nov 2020 08:04:22 GMT","connection":"close"},"statusCode":200,"body":"{\"code\":400,\"data\":{\"message\":\"\\\"comment\\\" is not allowed to be empty\"}}","type":"application/json"},"hz":7242.493155843969}}},"info":{"date":"2020-11-23T08:04:22.441Z","apiName":"server"}};
+    // --></script>
+    <div id="report">
+      <div id="report-details"><h1>Api Benchmark report</h1></div>
+      <div id="charts"></div>
+    </div>
+    <div style="text-align: center">
+    Generated by <a href="https://github.com/matteofigus/api-benchmark" target="_blank">api-benchmark</a><br /><br />
+    <iframe src="http://ghbtns.com/github-btn.html?user=matteofigus&repo=api-benchmark&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+    </div>
+    <script>
+
+      var selectors = {
+        charts: '#charts',
+        reportDetails: '#report-details',
+        panel: '.panel',
+        panels: {
+          stats: '.stats',
+          distribution: '.distribution',
+          response: '.response',
+          request: '.request'
+        },
+        button: '.button',
+        buttons: {
+          stats: '.button-stats',
+          distribution: '.button-distribution',
+          response: '.button-response',
+          request: '.button-request'
+        }
+      };
+
+      var formatNumber = function(number) {
+        number = String(number).split('.');
+        return number[0].replace(/(?=(?:\d{3})+$)(?!\b)/g, ',') +
+          (number[1] ? '.' + number[1] : '');
+      };
+
+      var formatDate = function(date){
+        return date.replace(/T/g, ' ').replace(/Z/g, ' ');
+      };
+
+      var fixNumber = function(number, digits){
+        return formatNumber(number.toFixed(digits));
+      };
+
+      var decodeHtml = function(text){
+        return $('<div/>').text(text).html();
+      };
+
+      var templates = {
+        reportDetails: function(info){
+          var formattedDate = formatDate(info.date);
+          return 'Benchmarked ' + info.apiName + ' on ' + formattedDate;
+        },
+        route: function(routeData, i){
+          var errorsCount = 0,
+              errorsDesc = '(',
+              duration = (new Date(routeData.options.end) - new Date(routeData.options.start))/1e3;
+
+          for(var errorType in routeData.errors){
+            errorsCount += routeData.errors[errorType].length;
+            errorsDesc += routeData.errors[errorType].length + ' ' + errorType + ',';
+          }
+
+          if(errorsCount == 0)
+            errorsDesc = '';
+          else
+            errorsDesc = errorsDesc.substr(0, errorsDesc.length - 1) + ')';
+
+          var template = '<div class="route"><div class="buttons">' +
+            '<a href="#stats" class="button button-stats selected">Stats</a>' +
+            '<a href="#distribution" class="button button-distribution">Distribution</a>' +
+            '<a href="#request" class="button button-request">Request details</a>' +
+            '<a href="#response" class="button button-response">Response details</a>' +
+            '</div><div class="stats panel"><div class="chart" id="chart' + i + '"></div>' +
+            '<div class="stats-details"><ul><li>' + routeData.stats.sample.length + ' run' +
+            (routeData.stats.sample.length > 1 ? 's' : '') + ' sampled with concurrency: ' +
+            routeData.options.concurrencyLevel + '</li>';
+
+          if(routeData.options.expectedStatusCode)
+            template += '<li>Expected status code: ' + routeData.options.expectedStatusCode + '</li>';
+
+          if(routeData.options.maxMean)
+            template += '<li>Expected max mean: ' + routeData.options.maxMean + '</li>';
+
+          if(routeData.options.maxSingleMean)
+            template += '<li>(*) Expected max mean across all concurrent requests: ' + routeData.options.maxSingleMean + '</li>';
+
+          template += '</ul><ul><li>Started: ' + formatDate(routeData.options.start) + '</li>' +
+            '<li>Ended: ' + formatDate(routeData.options.end) + ' (' + duration + ' seconds)</li>' +
+            '<li>' + fixNumber(routeData.hz, 2) + ' ops/sec \xb1 ' + fixNumber(routeData.stats.rme, 2) + '%</li>' +
+
+            '<li class="' + (!errorsCount ? 'green' : 'red') + '">' + errorsCount + ' error' +
+            (errorsCount == 1 ? '' : 's') + ' ' + errorsDesc + '</li>' +
+
+            '<li>Sample arithmetic mean: ' + fixNumber(routeData.stats.mean, 6) + '</li>';
+
+          if(routeData.options.concurrencyLevel > 1)
+            template += '<li>Mean across all the concurrent requests: ' + fixNumber(routeData.stats.singleMean, 6) + '</li>';
+
+          template += '<li>Sample standard deviation: ' + fixNumber(routeData.stats.deviation, 6) + '</li>' +
+            '<li>Margin of error: ' + fixNumber(routeData.stats.moe, 6) + '</li>' +
+            '<li>The standard error of the mean: ' + fixNumber(routeData.stats.sem, 6) + '</li>' +
+            '<li>The sample variance: ' + fixNumber(routeData.stats.variance, 6) + '</li>' +
+            '</ul><ul><li>75% Percentile: ' + fixNumber(routeData.stats.p75, 6) + '</li>' +
+            '<li>95% Percentile: ' + fixNumber(routeData.stats.p95, 6) + '</li>' +
+            '<li>99% Percentile: ' + fixNumber(routeData.stats.p99, 6) + '</li>' +
+            '<li>99.9% Percentile: ' + fixNumber(routeData.stats.p999, 6) + '</li>' +
+            '</ul></div></div><div class="distribution panel"><div class="distchart" id="distchart' + i + '">' +
+            '</div></div><div class="request panel hide">Request: ' + routeData.options.method.toUpperCase() +
+            ' <a href="' + routeData.href + '" target="_blank">' +
+            routeData.href + '</a><br />Concurrency level: ' + routeData.options.concurrencyLevel + '<br />';
+
+          if(routeData.options.delay)
+            template += 'Delay between bench cycles: ' + routeData.options.delay + '<br />';
+
+          var requestHeaders = 'none',
+              requestData = 'none',
+              requestQuery = 'none';
+
+          if(!!routeData.request.headers)
+            requestHeaders = '<br /><pre><code>' + JSON.stringify(routeData.request.headers, undefined, 2) + '</pre></code>';
+
+          if(!!routeData.request.data)
+            requestData = '<br /><pre><code>' + JSON.stringify(routeData.request.data, undefined, 2) + '</pre></code>';
+
+          if(!!routeData.request.query)
+            requestQuery = '<br /><pre><code>' + JSON.stringify(routeData.request.query, undefined, 2) + '</pre></code>';
+
+          template += '<br />Headers sent: ' + requestHeaders + '<br />Data sent: ' + requestData + '<br />Query sent: ' + requestQuery + '<br /></div><div class="response panel hide">Data here refers to the first sampled response.<br /><br />';
+
+          var responseHeader = JSON.stringify(routeData.response.header, undefined, 2),
+              responseBody = '';
+
+          try {
+            responseBody = JSON.stringify(JSON.parse(decodeHtml(routeData.response.body)), undefined, 2);
+          } catch(e){
+            responseBody = decodeHtml(routeData.response.body);
+          }
+
+          template += 'Response status: ' + routeData.response.statusCode + '<br />Response headers:<br />' +
+            '<pre><code>' + responseHeader + '</code></pre>' +
+            '<br />Response body:<br /><pre><code>' + responseBody + '</code></pre><br /></div></div>';
+
+          return template;
+        }
+      };
+
+      var bindButtons = function(){
+        var bindButton = function(panelName){
+          $(selectors.buttons[panelName]).click(function(){
+            var $sender = $(this),
+                $panelsContainer = $sender.parent().parent();
+
+            $panelsContainer.find(selectors.button).removeClass('selected');
+            $sender.addClass('selected');
+
+            $panelsContainer.find(selectors.panel).addClass('hide');
+            $panelsContainer.find(selectors.panels[panelName]).removeClass('hide');
+
+            return false;
+          });
+        };
+
+        bindButton('stats');
+        bindButton('distribution');
+        bindButton('response');
+        bindButton('request');
+      };
+
+      $(function(){
+        $(selectors.reportDetails).append(templates.reportDetails(data.info));
+
+        var counter = 0;
+        for(serviceName in data.benchmark){
+          for(routeName in data.benchmark[serviceName]){
+            if(routeName == 'isSlowest' || routeName == 'isFastest') { 
+              continue; 
+            }
+            $(selectors.charts).append(templates.route(data.benchmark[serviceName][routeName], counter));
+
+            var samples = data.benchmark[serviceName][routeName]['stats']['sample'],
+                meanArray = [],
+                mean = data.benchmark[serviceName][routeName]['stats']['mean'],
+                singleMeanArray = [],
+                singleMean = data.benchmark[serviceName][routeName]['stats']['singleMean'],
+                maxMeanArray = [],
+                maxMean = data.benchmark[serviceName][routeName].options.maxMean !== undefined,
+                maxSingleMeanArray = [],
+                maxSingleMean = data.benchmark[serviceName][routeName].options.maxSingleMean !== undefined,
+                errorsArray = [],
+                areThereSomeErrors = false;
+
+            for(var i = 0; i < samples.length; i++){
+              meanArray.push(mean);
+              singleMeanArray.push(singleMean);
+
+              errorsArray.push(null);
+
+              if(maxMean)
+                maxMeanArray.push(data.benchmark[serviceName][routeName].options.maxMean);
+
+              if(maxSingleMean)
+                maxSingleMeanArray.push(data.benchmark[serviceName][routeName].options.maxSingleMean);
+            }
+
+            for(var errorType in data.benchmark[serviceName][routeName].errors){
+              var errorsOfType = data.benchmark[serviceName][routeName]['errors'][errorType];
+              for(var i = 0; i < errorsOfType.length; i++){
+                if(errorsOfType[i].pos !== undefined){
+                  errorsArray[errorsOfType[i].pos] = data.benchmark[serviceName][routeName]['stats']['sample'][errorsOfType[i].pos];
+                  areThereSomeErrors = true;
+                }
+              }
+            }
+
+            var getSeriesOptions = function(label, color){
+              return {
+                showMarker: false,
+                pointLabels: { show: true },
+                label: label,
+                color: color
+              };
+            };
+
+            var lines = [samples],
+                series = [getSeriesOptions('Samples', '#6699FF')];
+
+            if(maxMean){
+              lines.push(maxMeanArray);
+              series.push(getSeriesOptions('Max Mean', '#F90'));
+            }
+
+            lines.push(meanArray);
+            series.push(getSeriesOptions('Mean', '#66FF00'));
+
+            if(maxSingleMean){
+              lines.push(maxSingleMeanArray);
+              series.push(getSeriesOptions('Max Single Mean (*)', '#EBFF00'));
+
+              lines.push(singleMeanArray);
+              series.push(getSeriesOptions('Single mean', '#FC6333'));
+            }
+
+            if(areThereSomeErrors > 0){
+              lines.push(errorsArray);
+              series.push({
+                showLine:false,
+                markerOptions: { size: 7, style:'x' },
+                label: 'Errors',
+                color: '#FF0000'
+              });
+            }
+
+            var options = {
+              title: {
+                text: data.benchmark[serviceName][routeName]['name'],
+                color: '#F1F1F1'
+              },
+              animate: true,
+              grid: {
+                background: '#000000', textColor: '#F1F1F1'
+              },
+              seriesDefaults:{
+                rendererOptions: {
+                  showDataLabels: true
+                }
+              },
+              highlighter: {
+                show: true,
+                sizeAdjust: 7.5
+              },
+              cursor:{
+                show: true,
+                zoom:true,
+              },
+              legend: {
+                show:true,
+                location: 'se',
+                background: 'rgba(101, 0, 253, 0.89)'
+              },
+              axesDefaults: {
+                labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+              },
+              axes: {
+                xaxis: {
+                  label: 'Samples',
+                  pad: 0
+                },
+                yaxis: {
+                  label: 'Response time (seconds)',
+                  tickOptions: {
+                    formatString:'%.6f'
+                  }
+                }
+              },
+              series: series
+            };
+
+            $.jqplot('chart' + counter, lines, options);
+            counter++;
+          }
+        }
+        hljs.initHighlightingOnLoad();
+        bindButtons();
+      });
+
+      $(function(){
+        var counter = 0;
+        for(serviceName in data.benchmark){
+          for(routeName in data.benchmark[serviceName]){
+            if(routeName == 'isSlowest' || routeName == 'isFastest') { 
+              continue; 
+            }
+            var samples = data.benchmark[serviceName][routeName]['stats']['sample'];
+            var sortedSamples = _.orderBy(samples);
+            var totalDelta = sortedSamples[sortedSamples.length - 1] - sortedSamples[0];
+
+            var bucketCount = ~~Math.min(totalDelta*1000, sortedSamples.length);
+            var delta = totalDelta/bucketCount;
+
+            var buckets = [[sortedSamples[0] + delta/2.0, 0]];
+
+            for (var i = 0; i < samples.length; i++) {
+              var s = sortedSamples[i];
+              while(s > (sortedSamples[0] + buckets.length * delta)) {
+                buckets.push([(sortedSamples[0] + buckets.length * delta + delta/2.0), 0]);
+              }
+              buckets[buckets.length - 1][1]++;
+            }
+
+            buckets = _.map(buckets, function(b){
+              return [b[0], 100*b[1]/samples.length];
+            });
+
+
+            var lines = [buckets],
+                series = [{
+                  showMarker: false,
+                  pointLabels: { show: true },
+                  label: 'Samples',
+                  color: '#6699FF',
+                  rendererOptions: {
+                    smooth: true
+                  }
+                }];
+
+            var options = {
+              title: {
+                text: data.benchmark[serviceName][routeName]['name'],
+                color: '#F1F1F1'
+              },
+              animate: true,
+              grid: {
+                background: '#000000', textColor: '#F1F1F1'
+              },
+              seriesDefaults:{
+                rendererOptions: {
+                  showDataLabels: true
+                }
+              },
+              highlighter: {
+                show: true,
+                sizeAdjust: 7.5
+              },
+              legend: {
+                show:true,
+                location: 'se',
+                background: 'rgba(101, 0, 253, 0.89)'
+              },
+              cursor:{
+                show: true,
+                zoom:true,
+              },
+              axesDefaults: {
+                labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+              },
+              axes: {
+                xaxis: {
+                  label: 'Response time (seconds)',
+                  tickOptions: {
+                    formatString:'%.3f'
+                  }
+                },
+                yaxis: {
+                  label: 'Percent of responses',
+                  tickOptions: {
+                    formatString: '%.1f%'
+                  }
+                }
+              },
+              series: series
+            };
+
+            $.jqplot('distchart' + counter, lines, options);
+            counter++;
+          }
+        }
+        $(".distribution.panel").addClass('hide');
+      });
+    </script>
+  </body>
+</html>

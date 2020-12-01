@@ -8,12 +8,9 @@
   },
   "author": "",
   "license": "ISC",
-<<<<<<< HEAD
   "dependencies": {
-    "mecore": "^1.2.0"
-=======
-  "devDependencies": {
-    "api-benchmark": "^1.0.1"
->>>>>>> dfc193ed706a4080354ca9a7fb855f0279a17f42
+    "api-benchmark": "^1.0.1",
+    "axios": "^0.21.0",
+    "lodash": "^4.17.20"
   }
 }

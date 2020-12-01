@@ -1,10 +1,11 @@
 const MeCore = require('mecore');
 
-const instanceName = 'Test01';
+const instanceName = 'demo';
 const meCore = new MeCore(instanceName, __dirname);
 
-meCore. Start();
+
+meCore.Start();
 
 module.exports.getInstance = () => {
-    return MeCore.getInstance(instanceName);
+  return MeCore.getInstance(instanceName);
 };

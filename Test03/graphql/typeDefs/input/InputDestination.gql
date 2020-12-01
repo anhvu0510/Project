@@ -1,0 +1,5 @@
+"Chọn tương ứng dịch vụ đích đến"
+input InputDestination {
+    bill:          INPUT_BILL_DESTINATION
+    topupMobile:   INPUT_TOPUP_MOBILE_DESTINATION
+}

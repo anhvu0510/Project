@@ -25,11 +25,11 @@ module.exports = async (request,reply) => {
             }).code(ResCode.REQUEST_FAIL);
         }
         //Check number account/ip
-        let replyNumberIP = await cacheHelper.getCathe(clientIP);
+        let replyNumberIP = await cacheHelper.getCathe(`SIGN-UP-${clientIP}`);
 
         //Create number of account/ip register
         if(_.isNil(replyNumberIP)){
-            replyNumberIP = await cacheHelper.setCache(clientIP,1);
+            replyNumberIP = await cacheHelper.setCache(`SIGN-UP-${clientIP}`,1);
         }
         //Process ip have 3 account
         if(replyNumberIP === 4){
@@ -52,9 +52,9 @@ module.exports = async (request,reply) => {
                 }).code(ResCode.REQUEST_FAIL);
             }
             //delete OTP-Register
-            await cacheHelper.delCache('OTP-Register');
+            const result = await cacheHelper.delCache('OTP-Register');
         }else{
-            await cacheHelper.setCache(clientIP,Number(++replyNumberIP));
+            const result = await cacheHelper.setCache(`SIGN-UP-${clientIP}`,Number(++replyNumberIP));
         }
         //Hash password
         const hashPassword = passwordHelper.hashPassword(password);
