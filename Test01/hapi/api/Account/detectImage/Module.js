@@ -97,9 +97,9 @@ detectIMG = async (url) => {
             const response =  await axios.post(URL_REQUEST, form, {
                 headers: form.getHeaders(),
                 proxy: {
+                    protocol: "http",
                     host: PROXY_SERVER.IP,
-                    port: PROXY_SERVER.PORT,
-                    protocol: "https"
+                    port: PROXY_SERVER.PORT
                 }
             });
 
