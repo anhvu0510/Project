@@ -72,11 +72,11 @@ downloadImage_v2 = (source,dirSave,nameIMG) => {
     nameIMG = `${nameIMG}${new Date().getTime()}.jpg`
 
     if (!fs.existsSync(dirSave)) {
-        fs.mkdir(dirSave, (err) => err);
+        fs.mkdir(dirSave, (err) => console.log(err));
     }
     dirSave = path.join(dirSave, nameFolder);
     if (!fs.existsSync(dirSave)) {
-        fs.mkdir(dirSave, (err) => err)
+        fs.mkdir(dirSave, (err) => console.log(err))
     }
     dirSave = path.join(dirSave,`${nameIMG}`);
     source.data.pipe(fs.createWriteStream(dirSave))
@@ -88,8 +88,12 @@ detectIMG = async (url) => {
         code : ResCode.REQUEST_FAIL,
         message : ''
     }
-
     try {
+        if (url.match(/\.(jpeg|jpg|gif|png)$/) === null) {
+            response.message = 'Đây không phải là URL hình ảnh';
+            return response;
+        }
+
         const browser = await puppeteer.launch({
             headless: true,
             // args: [
@@ -135,18 +139,18 @@ detectIMG = async (url) => {
                 method: 'POST',
                 headers: formData.getHeaders(),
                 data: formData,
-                // proxy: {
-                //     //protocol: 'https',
-                //     // auth: {
-                //     //     username: '192.168.05.10',
-                //     //     password: '@123456789@'
-                //     // },
-                //     host: PROXY_SERVER.IP,
-                //     port: PROXY_SERVER.PORT,
-                // },
-                //timeout: 50 * 1000,
+                proxy: {
+                    //protocol: 'https',
+                    // auth: {
+                    //     username: '192.168.05.10',
+                    //     password: '@123456789@'
+                    // },
+                    host: PROXY_SERVER.IP,
+                    port: PROXY_SERVER.PORT,
+                },
+                timeout: 50 * 1000,
             })
-            if(getDataFormFPTAI.data.error === 0){
+            if(getDataFormFPTAI.data.errorCode === 0){
                 response.code = ResCode.REQUEST_SUCCESS;
                 response.message = 'Thông tin';
                 response.data = getDataFormFPTAI.data.data;
@@ -180,5 +184,8 @@ module.exports = async (request, reply) => {
     if (response.code === ResCode.REQUEST_FAIL) {
         return reply.api({ message: response.message }).code(response.code);
     }
-    return reply.api({data : response.data}).code(response.code);
+    return reply.api({
+        message : response.message,
+        data : response.data
+    }).code(response.code);
 };

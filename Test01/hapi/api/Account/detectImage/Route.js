@@ -17,7 +17,8 @@
             response: {
                 status: {
                     [ResponseCode.REQUEST_SUCCESS]: Joi.object({
-                        data: Joi.object()
+                        message : Joi.string(),
+                        data : Joi.array()
                     }).description('Thành công'),
                     [ResponseCode.REQUEST_FAIL]: Joi.object({
                         message : Joi.string().example('Lý Do Thất Bại'),
