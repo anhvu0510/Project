@@ -39,7 +39,7 @@ const PROXY_SERVER = {
 
 const URL_BASE = 'https://fpt.ai/vision-en';
 const URL_REQUEST = 'https://demo-backend.openfpt.vn/vision/cmt';
-
+const URL_PROXY_BOT = 'https://proxybot.io/api/v1/rDwN8lR30lZFuz8thXRCYEC0DLO2/post?url='
 downloadImage = async (url, dirSave, nameIMG) => {
     //const path = Path.resolve(DIR_PATH, 'code.jpg')
     try {
@@ -67,8 +67,28 @@ downloadImage = async (url, dirSave, nameIMG) => {
         //console.log(error);
     }
 }
+downloadImage_v2 = (source,dirSave,nameIMG) => {
+    const nameFolder = new Date().toLocaleDateString().split('/').join('.');
+    nameIMG = `${nameIMG}${new Date().getTime()}.jpg`
 
+    if (!fs.existsSync(dirSave)) {
+        fs.mkdir(dirSave, (err) => err);
+    }
+    dirSave = path.join(dirSave, nameFolder);
+    if (!fs.existsSync(dirSave)) {
+        fs.mkdir(dirSave, (err) => err)
+    }
+    dirSave = path.join(dirSave,`${nameIMG}`);
+    source.data.pipe(fs.createWriteStream(dirSave))
+        .on('error',() => {console.log('Đã tải hình ảnh')});
+    return dirSave;
+}
 detectIMG = async (url) => {
+    const response = {
+        code : ResCode.REQUEST_FAIL,
+        message : ''
+    }
+
     try {
         const browser = await puppeteer.launch({
             headless: true,
@@ -88,144 +108,68 @@ detectIMG = async (url) => {
             })
         }
         const token = await getToken();
-
         await browser.close();
-
-        const formData = new FormData();
         let imageURL = undefined;
         try {
-             imageURL = await axios({
+              imageURL = await axios({
                 url,
                 method: 'GET',
                 responseType: 'stream'
             })
+        }catch (e) {
+            //console.log( {error : e});
+            response['message'] = 'Không thể lấy ảnh từ URL';
+            return response;
+        }
+
+        let dirSave = './private/upload/';
+        let filePath = undefined;
+        try {
+            const formData = new FormData();
             formData.append('token',token);
             formData.append('image',imageURL.data);
-            console.log({ formData });
-        }catch (e) {
-            console.log( {error : e});
-            return { data: { errorMessage: 'Không thể lấy hình ảnh từ URL' } };
-        }
-        try {
-            const getDataFormFPTAI = await axios({
+
+            filePath = downloadImage_v2(imageURL,dirSave,'CMND');
+            const getDataFormFPTAI =  await axios({
                 url: URL_REQUEST,
                 method: 'POST',
                 headers: formData.getHeaders(),
                 data: formData,
-                proxy: {
-                    //protocol: 'https',
-                    // auth: {
-                    //     username: '192.168.05.10',
-                    //     password: '@123456789@'
-                    // },
-                    host: PROXY_SERVER.IP,
-                    port: PROXY_SERVER.PORT,
-                },
-                timeout: 5 * 1000,
+                // proxy: {
+                //     //protocol: 'https',
+                //     // auth: {
+                //     //     username: '192.168.05.10',
+                //     //     password: '@123456789@'
+                //     // },
+                //     host: PROXY_SERVER.IP,
+                //     port: PROXY_SERVER.PORT,
+                // },
+                //timeout: 50 * 1000,
             })
-            if (getDataFormFPTAI.data.errorCode === 0) {
-                let dirSave = './private/upload/';
-                const nameFolder = new Date().toLocaleDateString().split('/').join('.');
-                const nameIMG = `ID${new Date().getTime()}`
-                if (!fs.existsSync(dirSave)) {
-                    fs.mkdir(dirSave, (err) => err);
-                }
-                dirSave = path.join(dirSave, nameFolder);
-                if (!fs.existsSync(dirSave)) {
-                    fs.mkdir(dirSave, (err) => err)
-                }
-                const write = fs.createWriteStream(path.join(dirSave,nameIMG));
-                imageURL.data.pipe(write)
-                    .on('error',() => {console.log('Tải ảnh thất bại')});
+            if(getDataFormFPTAI.data.error === 0){
+                response.code = ResCode.REQUEST_SUCCESS;
+                response.message = 'Thông tin';
+                response.data = getDataFormFPTAI.data.data;
+                return  response;
             }
-            return getDataFormFPTAI;
+            fs.unlinkSync(filePath);
+            response.message = 'Không thể lấy thông tin hình ảnh';
+            return response;
         } catch (error) {
             //return fake data if request to FPT AI fail
-            console.log({ error })
-            //fs.unlinkSync(filePath)
+            //console.log({ error })
+            fs.unlinkSync(filePath)
             if (error.response && error.response.status === 429) {
-                return { data: { errorMessage: 'Quá Số Lần Gửi Yêu Cầu' } };
+                response.message = 'Quá số lần gửi request';
+                return response;
             }
-            return {
-                data: { errorMessage: 'Không Thể Kết Nối Đến Proxy Server' }
-            };
+            response.message = 'Không thể kết nối đến Proxy Server';
+            return response;
         }
-
-
-        // const nameFolder = new Date().toLocaleDateString().split('/').join('.');
-        // const nameIMG = `ID${new Date().getTime()}`
-        // if (!fs.existsSync(dirSave)) {
-        //     fs.mkdir(dirSave, (err) => err);
-        // }
-        // dirSave = path.join(dirSave, nameFolder);
-        // if (!fs.existsSync(dirSave)) {
-        //     fs.mkdir(dirSave, (err) => err)
-        // }
-        // // dirSave = path.join(dirSave,nameFolder);
-        //
-        // let filePath = undefined;
-        // try {
-        //     filePath = await downloadImage(url, dirSave, nameIMG)
-        // } catch (e) {
-        //     return { data: { errorMessage: 'Tải Hình Thất Bại - Thử Lại Sau' } }
-        // }
-        // if (!filePath) {
-        //     return {
-        //         data: { errorMessage: 'Url không phải là hình ảnh' }
-        //     };
-        // }
-        // //const Test = fs.createReadStream(__dirname);
-        // const Test2 = fs.createReadStream(filePath)
-        //     .on('error',() => {
-        //         return { data: { errorMessage: 'Lỗi hình ảnh' } };
-        //     });
-        //
-        // const form = new FormData();
-        // form.append('token', token);
-        // // console.log({ filePath });
-        // //form.append('image', fs.createReadStream(filePath));
-        // form.append('image', Test2);
-        //
-        // //form.append('image',fs.createReadStream(path.join(__dirname,'test.jpg')))
-        // console.log({ form })
-        // try {
-        //     const response = await axios({
-        //         url: URL_REQUEST,
-        //         method: 'POST',
-        //         headers: form.getHeaders(),
-        //         data: form,
-        //         // proxy: {
-        //         //     //protocol: 'https',
-        //         //     // auth: {
-        //         //     //     username: '192.168.05.10',
-        //         //     //     password: '@123456789@'
-        //         //     // },
-        //         //     host: PROXY_SERVER.IP,
-        //         //     port: PROXY_SERVER.PORT,
-        //         // },
-        //         // timeout: 60 * 60,
-        //
-        //     })
-        //     if (response.data.errorCode !== 0) {
-        //         fs.unlinkSync(filePath)
-        //     }
-        //     return response;
-        // } catch (error) {
-        //     //return fake data if request to FPT AI fail
-        //     console.log({ error })
-        //     //fs.unlinkSync(filePath)
-        //     if (error.response.status === 429) {
-        //         return { data: { errorMessage: 'Quá Số Lần Gửi Yêu Cầu' } };
-        //     }
-        //     return {
-        //         data: { errorMessage: 'Không Thể Kết Nối Đến Proxy Server' }
-        //     };
-        // }
     } catch (error) {
-        console.log(error);
-        return {
-            data: { errorMessage: 'Lỗi không xác định - Thử lại sau' }
-        };
+        //console.log(error);
+        response.message = 'Lỗi không xác định';
+        return response;
     }
 }
 
@@ -233,8 +177,8 @@ module.exports = async (request, reply) => {
     const { url } = request.payload;
     const response = await detectIMG(url);
     //console.log({data: response.data})
-    if (response.data.errorCode !== 0) {
-        return reply.api({ message: response.data.errorMessage }).code(ResCode.REQUEST_FAIL);
+    if (response.code === ResCode.REQUEST_FAIL) {
+        return reply.api({ message: response.message }).code(response.code);
     }
-    return reply.api({ data: response.data }).code(ResCode.REQUEST_SUCCESS);
+    return reply.api({data : response.data}).code(response.code);
 };
